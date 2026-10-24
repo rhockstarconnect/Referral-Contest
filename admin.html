@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Rhockstar Connect</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 20px;
+      background: #111827;
+      border-bottom: 1px solid #334155;
+    }
+
+    header h2 {
+      color: #38bdf8;
+      font-size: 21px;
+    }
+
+    header p {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 25px 16px;
+    }
+
+    .panel {
+      background: #172337;
+      border: 1px solid #334155;
+      padding: 22px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+    }
+
+    h3 {
+      margin-bottom: 16px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: #172337;
+      border: 1px solid #334155;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .stat p {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 27px;
+      color: #38bdf8;
+      overflow-wrap: anywhere;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 14px;
+      border: 1px solid #475569;
+      border-radius: 7px;
+      background: #0f172a;
+      color: white;
+      font-size: 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 7px;
+      padding: 11px 15px;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 3px;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .success {
+      background: #22c55e;
+      color: #052e16;
+    }
+
+    .secondary {
+      background: #475569;
+      color: white;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 700px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #334155;
+      vertical-align: top;
+    }
+
+    th {
+      color: #38bdf8;
+      background: #1e293b;
+    }
+
+    td a {
+      color: #7dd3fc;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: #334155;
+      font-size: 12px;
+    }
+
+    #notice {
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .warning {
+      color: #fbbf24;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    @media (max-width: 500px) {
+      header {
+        padding: 16px;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h2>Rhockstar Connect</h2>
+    <p>Referral Competition · Admin Dashboard</p>
+  </header>
+
+  <main>
+
+    <section class="panel" id="loginPanel">
+      <h3>Admin Login</h3>
+      <p class="muted">
+        Sign in with your authorized administrator account.
+      </p>
+
+      <form id="loginForm">
+        <label for="adminEmail">Email address</label>
+        <input id="adminEmail" type="email" required
+               placeholder="Admin email">
+
+        <label for="adminPassword">Password</label>
+        <input id="adminPassword" type="password" required
+               placeholder="Password">
+
+        <button type="submit">Sign In</button>
+      </form>
+
+      <p id="loginMessage" role="status"></p>
+
+      <p class="warning">
+        Firebase authentication must be connected before this login works.
+        Do not use a public password or store admin credentials in this file.
+      </p>
+    </section>
+
+    <div id="dashboard" hidden>
+
+      <section class="stats">
+        <div class="stat">
+          <p>Total Participants</p>
+          <strong id="totalParticipants">0</strong>
+        </div>
+
+        <div class="stat">
+          <p>Approved Participants</p>
+          <strong id="approvedParticipants">0</strong>
+        </div>
+
+        <div class="stat">
+          <p>Total Tracked Clicks</p>
+          <strong id="totalClicks">0</strong>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Competition Settings</h3>
+
+        <form id="settingsForm">
+          <label for="firstPrize">First Prize (₦)</label>
+          <input id="firstPrize" type="number" min="0" value="100000" required>
+
+          <label for="secondPrize">Second Prize (₦)</label>
+          <input id="secondPrize" type="number" min="0" value="50000" required>
+
+          <label for="thirdPrize">Third Prize (₦)</label>
+          <input id="thirdPrize" type="number" min="0" value="20000" required>
+
+          <label for="endDate">Competition End Date</label>
+          <input id="endDate" type="date">
+
+          <button type="submit">Save Competition Settings</button>
+        </form>
+
+        <p class="muted">
+          These settings will affect the public website only after the
+          Firebase connection is implemented.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h3>Participant Management</h3>
+
+        <p class="muted">
+          Review submitted entries, approve participants, and adjust
+          tracked clicks. Changes must be saved securely to Firebase.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Participant</th>
+                <th>Referral Link</th>
+                <th>Status</th>
+                <th>Tracked Clicks</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody id="participantsTable">
+              <tr>
+                <td colspan="5">
+                  No participants loaded. Connect Firebase to display entries.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <button class="secondary" id="logoutButton" type="button">
+        Sign Out
+      </button>
+
+    </div>
+
+    <p id="notice" role="status"></p>
+
+  </main>
+
+  <script>
+    /*
+      ADMIN DASHBOARD STARTER
+
+      This file is currently a visual template only.
+      It does not authenticate administrators or update real participants.
+
+      Next, we will connect Firebase Authentication, Firestore and secure
+      backend functions. Never let a public webpage directly change click
+      totals or approve participants.
+    */
+
+    const loginForm = document.getElementById("loginForm");
+    const loginMessage = document.getElementById("loginMessage");
+    const dashboard = document.getElementById("dashboard");
+    const loginPanel = document.getElementById("loginPanel");
+    const notice = document.getElementById("notice");
+
+    loginForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      loginMessage.style.color = "#fbbf24";
+      loginMessage.textContent =
+        "Firebase authentication is not connected yet. No login was performed.";
+    });
+
+    document.getElementById("settingsForm").addEventListener(
+      "submit", function(event) {
+        event.preventDefault();
+
+        notice.style.color = "#fbbf24";
+        notice.textContent =
+          "Settings have not been saved. Firebase connection is required.";
+      }
+    );
+
+    document.getElementById("logoutButton").addEventListener(
+      "click", function() {
+        dashboard.hidden = true;
+        loginPanel.hidden = false;
+        notice.textContent = "The demo dashboard was closed.";
+      }
+    );
+  </script>
+
+</body>
+</html>
