@@ -374,67 +374,80 @@
     © <span id="year"></span> Rhockstar Connect. All rights reserved.
   </footer>
 
-  <script>
-    document.getElementById("year").textContent =
-      new Date().getFullYear();
+  
+<script type="module">
+  import { db } from "./firebase.js";
+  import {
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-    const form = document.getElementById("registrationForm");
-    const message = document.getElementById("message");
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
 
-    form.addEventListener("submit", function(event) {
-      event.preventDefault();
+  const form = document.getElementById("registrationForm");
+  const message = document.getElementById("message");
+  const submitButton = form.querySelector('button[type="submit"]');
 
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const referral = document.getElementById("referral").value.trim();
+  form.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-      try {
-        const url = new URL(referral);
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const referral = document.getElementById("referral").value.trim();
 
-        if (url.protocol !== "https:" && url.protocol !== "http:") {
-          throw new Error("Invalid URL");
-        }
-      } catch {
-        message.style.color = "#f87171";
-        message.textContent = "Please enter a valid referral link.";
-        return;
+    let url;
+
+    try {
+      url = new URL(referral);
+
+      if (
+        !["https:", "http:"].includes(url.protocol) ||
+        !url.hostname.includes(".")
+      ) {
+        throw new Error("Invalid link");
       }
+    } catch {
+      message.style.color = "#f87171";
+      message.textContent = "Please enter a valid referral link.";
+      return;
+    }
 
-      // Temporary demo only. This saves data in this browser.
-      // It does NOT send registrations to Firebase or an admin dashboard.
-      const entry = {
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+    message.style.color = "#cbd5e1";
+    message.textContent = "Submitting your registration...";
+
+    try {
+      await addDoc(collection(db, "participants"), {
         name: name,
         email: email,
-        referral: referral,
+        referral: url.href,
         status: "pending",
         clicks: 0,
-        submittedAt: new Date().toISOString()
-      };
+        submittedAt: serverTimestamp()
+      });
 
-      try {
-        const entries = JSON.parse(
-          localStorage.getItem("rhockstarCompetitionEntries") || "[]"
-        );
+      message.style.color = "#4ade80";
+      message.textContent =
+        "Registration submitted successfully! Your entry is pending admin approval.";
 
-        entries.push(entry);
+      form.reset();
 
-        localStorage.setItem(
-          "rhockstarCompetitionEntries",
-          JSON.stringify(entries)
-        );
+    } catch (error) {
+      console.error("Registration error:", error);
 
-        message.style.color = "#4ade80";
-        message.textContent =
-          "Demo registration saved in this browser. Firebase connection is still required for official registration.";
+      message.style.color = "#f87171";
+      message.textContent =
+        "Registration failed. Please try again later.";
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit Registration";
+    }
+  });
+</script>
 
-        form.reset();
-      } catch {
-        message.style.color = "#f87171";
-        message.textContent =
-          "Could not save the demo entry in this browser.";
-      }
-    });
-  </script>
 
 </body>
 </html>
