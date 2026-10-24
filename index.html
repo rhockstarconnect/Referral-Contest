@@ -1,0 +1,440 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rhockstar Connect Referral Competition</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 20px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #263449;
+    }
+
+    .logo {
+      color: #38bdf8;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: white;
+    }
+
+    .header-link {
+      color: white;
+      text-decoration: none;
+      background: #1e293b;
+      padding: 10px 16px;
+      border-radius: 8px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 70px 20px 50px;
+      background: radial-gradient(ellipse at top, #243b70, #0f172a 70%);
+    }
+
+    .tag {
+      display: inline-block;
+      color: #38bdf8;
+      border: 1px solid #38bdf8;
+      border-radius: 30px;
+      padding: 5px 14px;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(32px, 6vw, 54px);
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    h1 span {
+      color: #38bdf8;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin: 0 auto 25px;
+      color: #cbd5e1;
+    }
+
+    .button {
+      display: inline-block;
+      border: none;
+      background: #38bdf8;
+      color: #07111f;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: #7dd3fc;
+    }
+
+    .section {
+      max-width: 1100px;
+      padding: 45px 20px;
+      margin: auto;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 30px;
+    }
+
+    .prizes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #172337;
+      border: 1px solid #293951;
+      padding: 25px;
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    .prize-icon {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .prize-position {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .prize-amount {
+      color: #38bdf8;
+      font-size: 30px;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+
+    .register-box {
+      max-width: 600px;
+      margin: auto;
+      background: #172337;
+      border: 1px solid #293951;
+      border-radius: 14px;
+      padding: 25px;
+    }
+
+    .field {
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #3a4b63;
+      border-radius: 8px;
+      background: #0f172a;
+      color: white;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #38bdf8;
+    }
+
+    .register-box .button {
+      width: 100%;
+    }
+
+    .notice {
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .leaderboard-wrap {
+      overflow-x: auto;
+      background: #172337;
+      border: 1px solid #293951;
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 420px;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #293951;
+    }
+
+    th {
+      color: #38bdf8;
+      background: #1e293b;
+    }
+
+    .empty {
+      text-align: center;
+      color: #94a3b8;
+      padding: 25px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 15px;
+      color: #94a3b8;
+      border-top: 1px solid #263449;
+      font-size: 13px;
+    }
+
+    @media (max-width: 500px) {
+      header {
+        padding: 16px;
+      }
+
+      .logo {
+        font-size: 17px;
+      }
+
+      .hero {
+        padding-top: 50px;
+      }
+
+      .section {
+        padding: 35px 16px;
+      }
+
+      .register-box {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Rhockstar <span>Connect</span></div>
+    <a href="#register" class="header-link">Join Competition</a>
+  </header>
+
+  <section class="hero">
+    <div class="tag">REFERRAL COMPETITION</div>
+
+    <h1>Refer More.<br>Get More <span>Rewards.</span></h1>
+
+    <p>
+      Invite people to discover Rhockstar Connect, share your referral
+      link, and compete for exciting cash prizes. The more eligible
+      referral clicks you get, the higher you can climb on the leaderboard.
+    </p>
+
+    <a href="#register" class="button">Enter the Competition</a>
+  </section>
+
+  <section class="section" id="prizes">
+    <h2 class="section-title">Win Cash Prizes</h2>
+    <p class="section-subtitle">The top participants win the following prizes.</p>
+
+    <div class="prizes">
+      <div class="card">
+        <div class="prize-icon">🏆</div>
+        <div class="prize-position">1st Place</div>
+        <div class="prize-amount">₦100,000</div>
+        <p>Grand Prize</p>
+      </div>
+
+      <div class="card">
+        <div class="prize-icon">🥈</div>
+        <div class="prize-position">2nd Place</div>
+        <div class="prize-amount">₦50,000</div>
+        <p>Second Prize</p>
+      </div>
+
+      <div class="card">
+        <div class="prize-icon">🥉</div>
+        <div class="prize-position">3rd Place</div>
+        <div class="prize-amount">₦20,000</div>
+        <p>Third Prize</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="register">
+    <h2 class="section-title">Join the Competition</h2>
+    <p class="section-subtitle">
+      Submit your details and your existing Rhockstar Connect referral link.
+    </p>
+
+    <div class="register-box">
+      <form id="registrationForm">
+
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input id="name" type="text" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input id="email" type="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="field">
+          <label for="referral">Your Rhockstar Connect Referral Link</label>
+          <input id="referral" type="url"
+                 placeholder="https://rhockstarconnect.com/..."
+                 required>
+        </div>
+
+        <button class="button" type="submit">Submit Registration</button>
+
+        <p class="notice">
+          Your entry will need approval before appearing on the official
+          leaderboard. Submitting this form does not mean you have won a prize.
+        </p>
+
+        <div id="message" role="status"></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="section" id="leaderboard">
+    <h2 class="section-title">Live Leaderboard</h2>
+    <p class="section-subtitle">
+      Follow the competition rankings.
+    </p>
+
+    <div class="leaderboard-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Participant</th>
+            <th>Tracked Clicks</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+          <tr>
+            <td colspan="3" class="empty">
+              The official leaderboard will appear here after setup.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> Rhockstar Connect. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+
+    const form = document.getElementById("registrationForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const referral = document.getElementById("referral").value.trim();
+
+      try {
+        const url = new URL(referral);
+
+        if (url.protocol !== "https:" && url.protocol !== "http:") {
+          throw new Error("Invalid URL");
+        }
+      } catch {
+        message.style.color = "#f87171";
+        message.textContent = "Please enter a valid referral link.";
+        return;
+      }
+
+      // Temporary demo only. This saves data in this browser.
+      // It does NOT send registrations to Firebase or an admin dashboard.
+      const entry = {
+        name: name,
+        email: email,
+        referral: referral,
+        status: "pending",
+        clicks: 0,
+        submittedAt: new Date().toISOString()
+      };
+
+      try {
+        const entries = JSON.parse(
+          localStorage.getItem("rhockstarCompetitionEntries") || "[]"
+        );
+
+        entries.push(entry);
+
+        localStorage.setItem(
+          "rhockstarCompetitionEntries",
+          JSON.stringify(entries)
+        );
+
+        message.style.color = "#4ade80";
+        message.textContent =
+          "Demo registration saved in this browser. Firebase connection is still required for official registration.";
+
+        form.reset();
+      } catch {
+        message.style.color = "#f87171";
+        message.textContent =
+          "Could not save the demo entry in this browser.";
+      }
+    });
+  </script>
+
+</body>
+</html>
