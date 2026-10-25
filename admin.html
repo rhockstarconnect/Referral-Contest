@@ -3,540 +3,683 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rhockstar Competition Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <title>Rhockstar Referral Contest | Admin</title>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --border: #263449;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --blue: #38bdf8;
+      --purple: #8b5cf6;
+      --green: #22c55e;
+      --red: #f87171;
+    }
+
+    * { box-sizing: border-box; }
 
     body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
       font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
-      line-height: 1.5;
     }
 
-    header {
+    button, input, select { font: inherit; }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
       padding: 22px;
-      background: #111827;
-      border-bottom: 1px solid #334155;
     }
 
-    header h1 { color: #38bdf8; font-size: 22px; }
-    header p, .muted { color: #94a3b8; font-size: 13px; }
+    header { margin-bottom: 25px; }
 
-    main { max-width: 1150px; padding: 24px 16px; margin: auto; }
+    h1 { font-size: 25px; margin-bottom: 8px; }
 
-    .panel, .stat {
-      background: #172337;
-      border: 1px solid #334155;
-      border-radius: 12px;
+    h2 { font-size: 19px; }
+
+    .muted { color: var(--muted); }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
       padding: 20px;
       margin-bottom: 20px;
     }
 
-    h2 { font-size: 20px; margin-bottom: 14px; }
-    h3 { font-size: 16px; margin-bottom: 10px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 14px;
+    .login-panel {
+      max-width: 430px;
+      margin: 55px auto;
     }
 
-    .stat p { color: #94a3b8; font-size: 13px; }
-    .stat strong { font-size: 27px; color: #38bdf8; }
-
-    label { display: block; font-size: 14px; margin: 10px 0 5px; }
-
-    input {
+    input, select {
       width: 100%;
-      padding: 11px;
-      border: 1px solid #475569;
-      border-radius: 7px;
+      padding: 12px;
+      margin: 8px 0 14px;
+      border: 1px solid var(--border);
       background: #0f172a;
       color: white;
-      font-size: 15px;
+      border-radius: 8px;
     }
+
+    label { font-size: 14px; }
 
     button {
-      padding: 10px 13px;
+      padding: 10px 14px;
       border: 0;
-      border-radius: 7px;
-      margin: 5px 4px 5px 0;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #07111f;
       font-weight: bold;
       cursor: pointer;
-      background: #38bdf8;
-      color: #082f49;
+      margin: 3px;
     }
 
-    button:disabled { opacity: .5; cursor: not-allowed; }
-    .green { background: #22c55e; color: #052e16; }
-    .red { background: #ef4444; color: white; }
-    .gray { background: #475569; color: white; }
+    button.secondary {
+      background: #334155;
+      color: white;
+    }
 
-    .hidden { display: none !important; }
+    button.danger {
+      background: #7f1d1d;
+      color: white;
+    }
 
-    #message, #authMessage {
-      margin-top: 12px;
+    button:disabled {
+      opacity: .5;
+      cursor: wait;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      background: #1e293b;
+      margin: 12px 0;
       overflow-wrap: anywhere;
-      font-size: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 17px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      color: var(--blue);
+      margin-top: 8px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toolbar input, .toolbar select {
+      flex: 1;
+      min-width: 150px;
     }
 
     .table-wrap { overflow-x: auto; }
 
-    table { width: 100%; min-width: 750px; border-collapse: collapse; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 850px;
+    }
+
     th, td {
+      padding: 13px 10px;
+      border-bottom: 1px solid var(--border);
       text-align: left;
-      padding: 12px;
-      border-bottom: 1px solid #334155;
       vertical-align: top;
     }
 
-    th { color: #38bdf8; background: #1e293b; }
-    td a { color: #7dd3fc; overflow-wrap: anywhere; }
-    .status { font-size: 12px; color: #cbd5e1; }
+    th { color: var(--blue); }
 
-    @media (max-width: 500px) {
-      header { padding: 16px; }
-      .panel, .stat { padding: 15px; }
+    td small {
+      display: block;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: #334155;
+    }
+
+    .approved { color: #86efac; }
+    .rejected { color: #fca5a5; }
+    .pending { color: #fde68a; }
+
+    .hidden { display: none !important; }
+
+    .prize {
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 9px;
+      margin: 8px 0;
+    }
+
+    .prize label { display: block; }
+
+    .small { font-size: 13px; }
+
+    @media (max-width: 600px) {
+      .container { padding: 12px; }
+      .panel { padding: 14px; }
+      h1 { font-size: 21px; }
     }
   </style>
 </head>
 
 <body>
-<header>
-  <h1>Rhockstar Connect</h1>
-  <p>Referral Competition · Administrator Dashboard</p>
-</header>
+  <div class="container">
 
-<main>
-  <section class="panel" id="authPanel">
-    <h2>Administrator Login</h2>
-    <p class="muted">
-      Authorized administrator: akusu2841@gmail.com
-    </p>
+    <section id="loginSection" class="panel login-panel">
+      <h1>Rhockstar Connect</h1>
+      <p class="muted">Referral Competition Admin</p>
 
-    <form id="authForm">
-      <label for="email">Administrator email</label>
-      <input id="email" type="email" value="akusu2841@gmail.com" required>
+      <form id="loginForm">
+        <label for="email">Admin email</label>
+        <input id="email" type="email"
+          value="akusu2841@gmail.com"
+          autocomplete="username" required>
 
-      <label for="password">Password</label>
-      <input id="password" type="password" minlength="8"
-             autocomplete="current-password" required>
+        <label for="password">Password</label>
+        <input id="password" type="password"
+          autocomplete="current-password" required>
 
-      <button type="submit">Sign In</button>
-      <button type="button" class="gray" id="createAccount">
-        Create Admin Account
-      </button>
-    </form>
-
-    <p class="muted" style="margin-top:12px">
-      Create your account once, verify your email using the link sent to
-      your inbox, then sign in. Use a strong, private password.
-    </p>
-    <p id="authMessage" role="status"></p>
-  </section>
-
-  <section id="dashboard" class="hidden">
-    <div class="panel">
-      <p id="signedInAs" class="muted"></p>
-      <button class="gray" id="refreshButton">Refresh Data</button>
-      <button class="red" id="logoutButton">Sign Out</button>
-    </div>
-
-    <div class="grid">
-      <div class="stat">
-        <p>Total Participants</p>
-        <strong id="totalParticipants">0</strong>
-      </div>
-      <div class="stat">
-        <p>Approved Participants</p>
-        <strong id="approvedParticipants">0</strong>
-      </div>
-      <div class="stat">
-        <p>Tracked Clicks</p>
-        <strong id="totalClicks">0</strong>
-      </div>
-    </div>
-
-    <section class="panel">
-      <h2>Competition Settings</h2>
-      <form id="settingsForm">
-        <label for="firstPrize">First prize (₦)</label>
-        <input id="firstPrize" type="number" min="0" required value="100000">
-
-        <label for="secondPrize">Second prize (₦)</label>
-        <input id="secondPrize" type="number" min="0" required value="50000">
-
-        <label for="thirdPrize">Third prize (₦)</label>
-        <input id="thirdPrize" type="number" min="0" required value="20000">
-
-        <label for="endDate">Competition end date</label>
-        <input id="endDate" type="date">
-
-        <button type="submit">Save Settings</button>
+        <button id="loginButton" type="submit">Log In</button>
       </form>
-    </section>
 
-    <section class="panel">
-      <h2>Participant Management</h2>
-      <p class="muted">
-        Approve entries, reject entries, and manually adjust tracked clicks.
-        Manual click totals are not proof of verified registrations.
+      <div id="loginMessage" class="message hidden"
+        role="status"></div>
+
+      <p class="muted small">
+        Only the designated admin email is permitted.
       </p>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Participant</th>
-              <th>Referral Link</th>
-              <th>Status</th>
-              <th>Tracked Clicks</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="participantsTable">
-            <tr><td colspan="5">Sign in to load participants.</td></tr>
-          </tbody>
-        </table>
-      </div>
     </section>
-  </section>
 
-  <p id="message" role="status"></p>
-</main>
+    <section id="dashboard" class="hidden">
+      <header>
+        <div class="toolbar">
+          <div>
+            <h1>Referral Contest Dashboard</h1>
+            <p class="muted">Manage participants, clicks and prizes.</p>
+          </div>
+          <button id="refreshButton">Refresh</button>
+          <button id="logoutButton" class="secondary">Log Out</button>
+        </div>
+        <div id="dashboardMessage" class="message hidden"
+          role="status"></div>
+      </header>
 
-<script type="module">
-  import { auth, db } from "./firebase.js";
+      <div class="stats">
+        <div class="stat">Total registrations<strong id="totalCount">0</strong></div>
+        <div class="stat">Pending<strong id="pendingCount">0</strong></div>
+        <div class="stat">Approved<strong id="approvedCount">0</strong></div>
+        <div class="stat">Rejected<strong id="rejectedCount">0</strong></div>
+        <div class="stat">Recorded clicks<strong id="clickCount">0</strong></div>
+      </div>
 
-  import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    sendEmailVerification,
-    signOut,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+      <section class="panel">
+        <h2>Prize settings</h2>
+        <p class="muted small">
+          Edit the prize amounts displayed in this admin dashboard.
+          This does not automatically update the public homepage.
+        </p>
 
-  import {
-    collection,
-    getDocs,
-    doc,
-    getDoc,
-    setDoc,
-    updateDoc
-  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+        <form id="prizeForm">
+          <div class="prize">
+            <label for="prize1">1st place prize (₦)</label>
+            <input id="prize1" type="number" min="0" step="1"
+              value="100000" required>
+          </div>
+          <div class="prize">
+            <label for="prize2">2nd place prize (₦)</label>
+            <input id="prize2" type="number" min="0" step="1"
+              value="50000" required>
+          </div>
+          <div class="prize">
+            <label for="prize3">3rd place prize (₦)</label>
+            <input id="prize3" type="number" min="0" step="1"
+              value="20000" required>
+          </div>
+          <button type="submit">Save Prize Settings</button>
+        </form>
+      </section>
 
-  const ADMIN_EMAIL = "akusu2841@gmail.com";
+      <section class="panel">
+        <h2>Participants</h2>
+        <div class="toolbar">
+          <input id="searchInput"
+            placeholder="Search name, email or referral link">
 
-  const authPanel = document.getElementById("authPanel");
-  const dashboard = document.getElementById("dashboard");
-  const authForm = document.getElementById("authForm");
-  const authMessage = document.getElementById("authMessage");
-  const message = document.getElementById("message");
-  const participantsTable = document.getElementById("participantsTable");
+          <select id="statusFilter">
+            <option value="all">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
 
-  let currentUser = null;
+        <p class="muted small">
+          Click counts are manually maintained by the administrator.
+          They are not automatic or independently verified.
+        </p>
 
-  function showMessage(element, text, color = "#38bdf8") {
-    element.style.color = color;
-    element.textContent = text;
-  }
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Participant</th>
+                <th>Referral</th>
+                <th>Clicks</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="participantsTable">
+              <tr><td colspan="5">Log in to load participants.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-  function checkAdminEmail(email) {
-    return (email || "").toLowerCase() === ADMIN_EMAIL;
-  }
+      <section class="panel">
+        <h2>Leaderboard</h2>
+        <p class="muted small">
+          Ranked by manually recorded clicks among approved participants.
+        </p>
+        <div id="leaderboard"></div>
+      </section>
+    </section>
+  </div>
 
-  document.getElementById("createAccount").addEventListener("click", async () => {
-    const email = document.getElementById("email").value.trim().toLowerCase();
-    const password = document.getElementById("password").value;
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-    if (!checkAdminEmail(email)) {
-      showMessage(authMessage, "Only the designated admin email is permitted.", "#f87171");
-      return;
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      doc,
+      updateDoc,
+      setDoc,
+      getDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
+      authDomain: "rcreferral-contest.firebaseapp.com",
+      projectId: "rcreferral-contest",
+      storageBucket: "rcreferral-contest.firebasestorage.app",
+      messagingSenderId: "137378826916",
+      appId: "1:137378826916:web:45b695d41fbd3eb940f431",
+      measurementId: "G-9QCXRR9V56"
+    };
+
+    const ADMIN_EMAIL = "akusu2841@gmail.com";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const $ = id => document.getElementById(id);
+    let participants = [];
+    let loading = false;
+
+    function showMessage(id, message) {
+      const el = $(id);
+      el.textContent = message;
+      el.classList.remove("hidden");
     }
 
-    if (password.length < 8) {
-      showMessage(authMessage, "Choose a password with at least 8 characters.", "#f87171");
-      return;
+    function hideMessage(id) {
+      $(id).classList.add("hidden");
     }
 
-    try {
-      const credential = await createUserWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(credential.user);
-      await signOut(auth);
-
-      showMessage(
-        authMessage,
-        "Account created. Check your email and click the verification link, then sign in."
-      );
-    } catch (error) {
-      showMessage(authMessage, error.message, "#f87171");
-    }
-  });
-
-  authForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value.trim().toLowerCase();
-    const password = document.getElementById("password").value;
-
-    if (!checkAdminEmail(email)) {
-      showMessage(authMessage, "This email is not authorized.", "#f87171");
-      return;
+    function money(value) {
+      return "₦" + Number(value || 0).toLocaleString("en-NG");
     }
 
-    try {
-      const credential = await signInWithEmailAndPassword(auth, email, password);
+    function isAdmin(user) {
+      return user &&
+        user.email &&
+        user.email.toLowerCase() === ADMIN_EMAIL;
+    }
 
-      await credential.user.reload();
+    $("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      hideMessage("loginMessage");
 
-      if (!credential.user.emailVerified) {
-        await signOut(auth);
-        showMessage(
-          authMessage,
-          "Verify your email first. Check your inbox and spam folder.",
-          "#f87171"
-        );
+      const email = $("email").value.trim().toLowerCase();
+      const password = $("password").value;
+
+      if (email !== ADMIN_EMAIL) {
+        showMessage("loginMessage", "This email is not authorized.");
         return;
       }
 
-      showMessage(authMessage, "Signed in successfully.", "#4ade80");
-    } catch (error) {
-      showMessage(authMessage, error.message, "#f87171");
-    }
-  });
+      $("loginButton").disabled = true;
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      currentUser = null;
-      authPanel.classList.remove("hidden");
-      dashboard.classList.add("hidden");
-      return;
-    }
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        showMessage("loginMessage", error.message);
+      } finally {
+        $("loginButton").disabled = false;
+      }
+    });
 
-    await user.reload();
+    onAuthStateChanged(auth, async user => {
+      if (!user) {
+        $("loginSection").classList.remove("hidden");
+        $("dashboard").classList.add("hidden");
+        return;
+      }
 
-    if (!checkAdminEmail(user.email) || !user.emailVerified) {
+      if (!isAdmin(user)) {
+        await signOut(auth);
+        showMessage("loginMessage", "This account is not authorized.");
+        return;
+      }
+
+      $("loginSection").classList.add("hidden");
+      $("dashboard").classList.remove("hidden");
+      await loadDashboard();
+    });
+
+    $("logoutButton").addEventListener("click", async () => {
       await signOut(auth);
-      showMessage(authMessage, "Access denied. Use the verified admin account.", "#f87171");
-      return;
+    });
+
+    async function loadDashboard() {
+      if (loading) return;
+      loading = true;
+      showMessage("dashboardMessage", "Loading participant data...");
+      try {
+        const snapshot = await getDocs(collection(db, "participants"));
+
+        participants = snapshot.docs.map(item => ({
+          id: item.id,
+          ...item.data()
+        }));
+
+        await loadPrizes();
+        renderAll();
+        hideMessage("dashboardMessage");
+      } catch (error) {
+        showMessage(
+          "dashboardMessage",
+          "Could not load data: " + error.message +
+          " Check your Firestore security rules."
+        );
+      } finally {
+        loading = false;
+      }
     }
 
-    currentUser = user;
-    authPanel.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-    document.getElementById("signedInAs").textContent =
-      "Signed in as " + user.email;
-
-    await loadDashboard();
-  });
-
-  document.getElementById("logoutButton").addEventListener("click", async () => {
-    await signOut(auth);
-    showMessage(message, "You have signed out.");
-  });
-
-  document.getElementById("refreshButton").addEventListener("click", loadDashboard);
-
-  async function loadDashboard() {
-    if (!currentUser) return;
-
-    try {
-      showMessage(message, "Loading competition data...");
-
-      const snapshot = await getDocs(collection(db, "participants"));
-      const participants = snapshot.docs.map(item => ({
-        id: item.id,
-        ...item.data()
-      }));
-
-      participants.sort((a, b) => (Number(b.clicks) || 0) - (Number(a.clicks) || 0));
-
-      document.getElementById("totalParticipants").textContent = participants.length;
-      document.getElementById("approvedParticipants").textContent =
-        participants.filter(p => p.status === "approved").length;
-      document.getElementById("totalClicks").textContent =
-        participants.reduce((sum, p) => sum + (Number(p.clicks) || 0), 0);
-
-      renderParticipants(participants);
-      await loadSettings();
-
-      showMessage(message, "Competition data loaded.", "#4ade80");
-    } catch (error) {
-      console.error(error);
-      showMessage(
-        message,
-        "Could not load data. Check Firestore rules and your verified admin login. " + error.message,
-        "#f87171"
-      );
-    }
-  }
-
-  function renderParticipants(participants) {
-    participantsTable.replaceChildren();
-
-    if (participants.length === 0) {
-      const row = document.createElement("tr");
-      const cell = document.createElement("td");
-      cell.colSpan = 5;
-      cell.textContent = "No registrations yet.";
-      row.appendChild(cell);
-      participantsTable.appendChild(row);
-      return;
-    }
-
-    for (const participant of participants) {
-      const row = document.createElement("tr");
-
-      const identity = document.createElement("td");
-      const name = document.createElement("strong");
-      name.textContent = participant.name || "Unnamed";
-      const email = document.createElement("div");
-      email.className = "muted";
-      email.textContent = participant.email || "";
-      identity.append(name, email);
-
-      const linkCell = document.createElement("td");
-      const link = document.createElement("a");
-      link.href = participant.referral || "#";
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = participant.referral || "No link";
-      linkCell.appendChild(link);
-
-      const statusCell = document.createElement("td");
-      statusCell.textContent = participant.status || "pending";
-      statusCell.className = "status";
-
-      const clicksCell = document.createElement("td");
-      clicksCell.textContent = String(Number(participant.clicks) || 0);
-
-      const actionsCell = document.createElement("td");
-
-      const approveButton = document.createElement("button");
-      approveButton.className = "green";
-      approveButton.textContent = "Approve";
-      approveButton.disabled = participant.status === "approved";
-      approveButton.addEventListener("click", () =>
-        changeStatus(participant.id, "approved")
-      );
-
-      const rejectButton = document.createElement("button");
-      rejectButton.className = "red";
-      rejectButton.textContent = "Reject";
-      rejectButton.addEventListener("click", () =>
-        changeStatus(participant.id, "rejected")
-      );
-
-      const addButton = document.createElement("button");
-      addButton.textContent = "+1";
-      addButton.addEventListener("click", () =>
-        changeClicks(participant.id, (Number(participant.clicks) || 0) + 1)
-      );
-
-      const subtractButton = document.createElement("button");
-      subtractButton.className = "gray";
-      subtractButton.textContent = "−1";
-      subtractButton.disabled = (Number(participant.clicks) || 0) <= 0;
-      subtractButton.addEventListener("click", () =>
-        changeClicks(participant.id, Math.max(0, (Number(participant.clicks) || 0) - 1))
-      );
-
-      const setButton = document.createElement("button");
-      setButton.className = "gray";
-      setButton.textContent = "Set total";
-      setButton.addEventListener("click", async () => {
-        const current = Number(participant.clicks) || 0;
-        const value = prompt("Enter the new tracked click total:", String(current));
-        if (value === null) return;
-
-        const total = Number(value);
-        if (!Number.isSafeInteger(total) || total < 0) {
-          showMessage(message, "Enter a whole number of zero or more.", "#f87171");
-          return;
+    async function loadPrizes() {
+      try {
+        const snap = await getDoc(doc(db, "settings", "prizes"));
+        if (snap.exists()) {
+          const data = snap.data();
+          $("prize1").value = data.first ?? 100000;
+          $("prize2").value = data.second ?? 50000;
+          $("prize3").value = data.third ?? 20000;
         }
-        await changeClicks(participant.id, total);
+      } catch (error) {
+        console.error("Prize settings could not be loaded:", error);
+      }
+    }
+
+    $("prizeForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!isAdmin(auth.currentUser)) return;
+
+      const first = Number($("prize1").value);
+      const second = Number($("prize2").value);
+      const third = Number($("prize3").value);
+
+      if (![first, second, third].every(
+        n => Number.isSafeInteger(n) && n >= 0
+      )) {
+        showMessage("dashboardMessage", "Enter valid whole-number prize amounts.");
+        return;
+      }
+
+      try {
+        await setDoc(doc(db, "settings", "prizes"), {
+          first, second, third,
+          updatedAt: serverTimestamp()
+        });
+        showMessage("dashboardMessage", "Prize settings saved.");
+      } catch (error) {
+        showMessage("dashboardMessage", "Could not save prizes: " + error.message);
+      }
+    });
+
+    function renderAll() {
+      const pending = participants.filter(p => p.status === "pending").length;
+      const approved = participants.filter(p => p.status === "approved").length;
+      const rejected = participants.filter(p => p.status === "rejected").length;
+      const clicks = participants.reduce((sum, p) => sum + safeClicks(p.clicks), 0);
+
+      $("totalCount").textContent = participants.length;
+      $("pendingCount").textContent = pending;
+      $("approvedCount").textContent = approved;
+      $("rejectedCount").textContent = rejected;
+      $("clickCount").textContent = clicks;
+
+      renderParticipants();
+      renderLeaderboard();
+    }
+
+    function safeClicks(value) {
+      const n = Number(value);
+      return Number.isSafeInteger(n) && n >= 0 ? n : 0;
+    }
+
+    function addCell(row, value) {
+      const cell = document.createElement("td");
+      cell.textContent = value == null ? "" : String(value);
+      row.appendChild(cell);
+      return cell;
+    }
+
+    function renderParticipants() {
+      const tbody = $("participantsTable");
+      tbody.replaceChildren();
+
+      const term = $("searchInput").value.trim().toLowerCase();
+      const filter = $("statusFilter").value;
+
+      const filtered = participants.filter(p => {
+        const matchesStatus = filter === "all" || p.status === filter;
+        const text = [p.name, p.email, p.referral]
+          .map(value => String(value || "").toLowerCase()).join(" ");
+        return matchesStatus && text.includes(term);
       });
 
-      actionsCell.append(
-        approveButton, rejectButton,
-        document.createElement("br"),
-        addButton, subtractButton, setButton
-      );
+      if (!filtered.length) {
+        const row = document.createElement("tr");
+        const cell = addCell(row, "No participants found.");
+        cell.colSpan = 5;
+        tbody.appendChild(row);
+        return;
+      }
 
-      row.append(identity, linkCell, statusCell, clicksCell, actionsCell);
-      participantsTable.appendChild(row);
-    }
-  }
+      filtered.forEach(p => {
+        const row = document.createElement("tr");
 
-  async function changeStatus(id, status) {
-    if (!currentUser) return;
+        const participantCell = document.createElement("td");
+        const name = document.createElement("strong");
+        name.textContent = p.name || "Unnamed";
+        const email = document.createElement("small");
+        email.textContent = p.email || "";
+        participantCell.append(name, email);
+        row.appendChild(participantCell);
 
-    try {
-      await updateDoc(doc(db, "participants", id), { status });
-      showMessage(message, "Participant status updated.", "#4ade80");
-      await loadDashboard();
-    } catch (error) {
-      showMessage(message, "Could not update status: " + error.message, "#f87171");
-    }
-  }
+        const referralCell = document.createElement("td");
+        referralCell.textContent = p.referral || "Not provided";
+        row.appendChild(referralCell);
 
-  async function changeClicks(id, clicks) {
-    if (!currentUser) return;
+        const clickCell = document.createElement("td");
+        const clickInput = document.createElement("input");
+        clickInput.type = "number";
+        clickInput.min = "0";
+        clickInput.step = "1";
+        clickInput.value = safeClicks(p.clicks);
+        clickInput.style.width = "100px";
+        clickInput.setAttribute("aria-label", "Referral clicks");
+        clickCell.appendChild(clickInput);
+        row.appendChild(clickCell);
 
-    try {
-      await updateDoc(doc(db, "participants", id), { clicks });
-      showMessage(message, "Tracked clicks updated.", "#4ade80");
-      await loadDashboard();
-    } catch (error) {
-      showMessage(message, "Could not update clicks: " + error.message, "#f87171");
-    }
-  }
+        const statusCell = document.createElement("td");
+        const status = document.createElement("span");
+        status.className = "status " + (p.status || "pending");
+        status.textContent = p.status || "pending";
+        statusCell.appendChild(status);
+        row.appendChild(statusCell);
 
-  async function loadSettings() {
-    const settingsRef = doc(db, "settings", "competition");
-    const snapshot = await getDoc(settingsRef);
+        const actionsCell = document.createElement("td");
 
-    if (!snapshot.exists()) return;
+        const saveClicksButton = document.createElement("button");
+        saveClicksButton.textContent = "Save clicks";
+        saveClicksButton.addEventListener("click", async () => {
+          const value = Number(clickInput.value);
+          if (!Number.isSafeInteger(value) || value < 0) {
+            alert("Enter a valid non-negative whole number.");
+            return;
+          }
+          await updateParticipant(p.id, { clicks: value }, "Clicks updated.");
+        });
 
-    const settings = snapshot.data();
-    document.getElementById("firstPrize").value = settings.firstPrize ?? 100000;
-    document.getElementById("secondPrize").value = settings.secondPrize ?? 50000;
-    document.getElementById("thirdPrize").value = settings.thirdPrize ?? 20000;
-    document.getElementById("endDate").value = settings.endDate ?? "";
-  }
+        const statusSelect = document.createElement("select");
+        ["pending", "approved", "rejected"].forEach(value => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = value;
+          statusSelect.appendChild(option);
+        });
+        statusSelect.value = ["pending", "approved", "rejected"].includes(p.status)
+          ? p.status : "pending";
+        statusSelect.setAttribute("aria-label", "Participant status");
 
-  document.getElementById("settingsForm").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!currentUser) return;
+        const saveStatusButton = document.createElement("button");
+        saveStatusButton.textContent = "Save status";
+        saveStatusButton.className = "secondary";
+        saveStatusButton.addEventListener("click", async () => {
+          await updateParticipant(
+            p.id,
+            { status: statusSelect.value },
+            "Participant status updated."
+          );
+        });
 
-    const firstPrize = Number(document.getElementById("firstPrize").value);
-    const secondPrize = Number(document.getElementById("secondPrize").value);
-    const thirdPrize = Number(document.getElementById("thirdPrize").value);
-    const endDate = document.getElementById("endDate").value;
-
-    if (![firstPrize, secondPrize, thirdPrize].every(
-      n => Number.isSafeInteger(n) && n >= 0
-    )) {
-      showMessage(message, "Prize amounts must be non-negative whole numbers.", "#f87171");
-      return;
-    }
-
-    try {
-      await setDoc(doc(db, "settings", "competition"), {
-        firstPrize,
-        secondPrize,
-        thirdPrize,
-        endDate
+        actionsCell.append(saveClicksButton, statusSelect, saveStatusButton);
+        row.appendChild(actionsCell);
+        tbody.appendChild(row);
       });
-
-      showMessage(message, "Competition settings saved.", "#4ade80");
-    } catch (error) {
-      showMessage(message, "Could not save settings: " + error.message, "#f87171");
     }
-  });
-</script>
+
+    async function updateParticipant(id, changes, successMessage) {
+      if (!isAdmin(auth.currentUser)) {
+        showMessage("dashboardMessage", "Admin login required.");
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, "participants", id), changes);
+        participants = participants.map(p =>
+          p.id === id ? { ...p, ...changes } : p
+        );
+        renderAll();
+        showMessage("dashboardMessage", successMessage);
+      } catch (error) {
+        showMessage("dashboardMessage", "Update failed: " + error.message);
+      }
+    }
+
+    function renderLeaderboard() {
+      const container = $("leaderboard");
+      container.replaceChildren();
+
+      const ranked = participants
+        .filter(p => p.status === "approved")
+        .sort((a, b) => safeClicks(b.clicks) - safeClicks(a.clicks));
+
+      if (!ranked.length) {
+        container.textContent = "No approved participants yet.";
+        return;
+      }
+
+      ranked.forEach((p, index) => {
+        const item = document.createElement("div");
+        item.className = "prize";
+
+        const title = document.createElement("strong");
+        title.textContent = `${index + 1}. ${p.name || "Unnamed"}`;
+
+        const details = document.createElement("div");
+        details.className = "muted small";
+        details.textContent =
+          `${safeClicks(p.clicks)} clicks · ${p.email || ""}`;
+
+        item.append(title, details);
+        if (index < 3) {
+          const prizeValue = [
+            Number($("prize1").value || 0),
+            Number($("prize2").value || 0),
+            Number($("prize3").value || 0)
+          ][index];
+
+          const prize = document.createElement("div");
+          prize.textContent = "Prize: " + money(prizeValue);
+          prize.style.color = "var(--blue)";
+          item.appendChild(prize);
+        }
+        container.appendChild(item);
+      });
+    }
+
+    $("searchInput").addEventListener("input", renderParticipants);
+    $("statusFilter").addEventListener("change", renderParticipants);
+    ["prize1", "prize2", "prize3"].forEach(id =>
+      $(id).addEventListener("input", renderLeaderboard)
+    );
+
+    $("refreshButton").addEventListener("click", loadDashboard);
+  </script>
 </body>
 </html>
