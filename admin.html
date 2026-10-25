@@ -5,33 +5,51 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rhockstar Referral Contest | Admin</title>
+
 <style>
 :root {
-  --bg:#0b1120; --panel:#111c30; --line:#2a3b55;
-  --text:#e5edf8; --muted:#9aabc2; --blue:#38bdf8;
+  --bg:#0b1120;
+  --panel:#111c30;
+  --line:#2a3b55;
+  --text:#e5edf8;
+  --muted:#9aabc2;
+  --blue:#38bdf8;
 }
 * { box-sizing:border-box; }
 body {
-  margin:0; padding:20px; background:var(--bg);
-  color:var(--text); font:15px/1.5 Arial,sans-serif;
+  margin:0;
+  padding:20px;
+  background:var(--bg);
+  color:var(--text);
+  font:15px/1.5 Arial,sans-serif;
 }
 .wrap { max-width:1400px; margin:auto; }
 h1,h2 { color:var(--blue); }
 .panel {
-  background:var(--panel); border:1px solid var(--line);
-  border-radius:14px; padding:20px; margin:18px 0;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:20px;
+  margin:18px 0;
 }
 input,select,button {
-  font:inherit; padding:10px; margin:4px;
-  border-radius:7px; max-width:100%;
+  font:inherit;
+  padding:10px;
+  margin:4px;
+  border-radius:7px;
+  max-width:100%;
 }
 input,select {
-  background:var(--bg); color:white;
+  background:var(--bg);
+  color:white;
   border:1px solid #40516b;
 }
 button {
-  background:#2563eb; color:white; border:0;
-  cursor:pointer; font-weight:bold;
+  background:#2563eb;
+  color:white;
+  border:0;
+  cursor:pointer;
+  font-weight:bold;
 }
 button:disabled { opacity:.5; cursor:wait; }
 .danger { background:#be123c; }
@@ -40,40 +58,68 @@ button:disabled { opacity:.5; cursor:wait; }
 .muted { color:var(--muted); }
 .hidden { display:none!important; }
 #message {
-  padding:10px; margin:12px 0; white-space:pre-wrap;
+  padding:10px;
+  margin:12px 0;
+  white-space:pre-wrap;
 }
 #message:empty { display:none; }
 #message.success { color:#86efac; }
 #message.error { color:#fecdd3; background:#4c1420; }
 #message.info { color:#bfdbfe; background:#172554; }
 .toolbar {
-  display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
 }
 .toolbar input { flex:1; min-width:180px; }
 .grid {
-  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:12px;
 }
 .stat {
-  background:#17243a; border:1px solid var(--line);
-  padding:16px; border-radius:12px;
+  background:#17243a;
+  border:1px solid var(--line);
+  padding:16px;
+  border-radius:12px;
 }
-.stat strong { display:block; font-size:25px; color:var(--blue); }
+.stat strong {
+  display:block;
+  font-size:25px;
+  color:var(--blue);
+}
 .stat span { color:var(--muted); font-size:13px; }
 .row {
-  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:12px;
 }
-.field { display:flex; flex-direction:column; gap:5px; margin:8px 0; }
+.field {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  margin:8px 0;
+}
 .field input { width:100%; margin:0; }
 .table-wrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; min-width:900px; }
+table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:900px;
+}
 th,td {
-  padding:10px; border-bottom:1px solid #334155;
-  text-align:left; vertical-align:top;
+  padding:10px;
+  border-bottom:1px solid #334155;
+  text-align:left;
+  vertical-align:top;
 }
 th { color:var(--blue); }
-td input,td select { width:100%; min-width:90px; margin:2px 0; }
+td input,td select {
+  width:100%;
+  min-width:90px;
+  margin:2px 0;
+}
 .actions { min-width:220px; }
 .actions button { font-size:12px; padding:7px; }
 .identity { min-width:170px; }
@@ -81,8 +127,11 @@ td input,td select { width:100%; min-width:90px; margin:2px 0; }
 .login { max-width:460px; margin:35px auto; }
 .login input,.login button { width:100%; margin:5px 0; }
 .leader-row {
-  display:flex; justify-content:space-between; gap:12px;
-  padding:8px 0; border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:8px 0;
+  border-bottom:1px solid var(--line);
 }
 @media(max-width:750px) {
   body { padding:10px; }
@@ -95,6 +144,7 @@ td input,td select { width:100%; min-width:90px; margin:2px 0; }
 }
 </style>
 </head>
+
 <body>
 <div class="wrap">
 
@@ -103,6 +153,7 @@ td input,td select { width:100%; min-width:90px; margin:2px 0; }
     <h1>Rhockstar Referral Contest</h1>
     <p class="muted">Administrator control panel</p>
   </div>
+
   <div id="headerActions" class="toolbar hidden">
     <span id="loggedInAs" class="muted"></span>
     <button id="refreshBtn" class="secondary">Refresh</button>
@@ -114,6 +165,7 @@ td input,td select { width:100%; min-width:90px; margin:2px 0; }
 
 <section id="loginPanel" class="panel login">
   <h2>Admin Login</h2>
+
   <form id="loginForm">
     <div class="field">
       <label for="email">Admin email</label>
@@ -121,13 +173,16 @@ td input,td select { width:100%; min-width:90px; margin:2px 0; }
         value="akusu2841@gmail.com"
         autocomplete="username" required>
     </div>
+
     <div class="field">
       <label for="password">Password</label>
       <input id="password" type="password"
         autocomplete="current-password" required>
     </div>
+
     <button type="submit">Log In</button>
   </form>
+
   <p class="note">Administrator access only.</p>
 </section>
 
@@ -154,51 +209,61 @@ td input,td select { width:100%; min-width:90px; margin:2px 0; }
 
   <section class="panel">
     <h2>Prize Settings</h2>
+
     <form id="prizeForm">
       <div class="row">
         <div class="field">
           <label for="prize1">First Prize (₦)</label>
           <input id="prize1" type="number" min="0" step="1" required>
         </div>
+
         <div class="field">
           <label for="prize2">Second Prize (₦)</label>
           <input id="prize2" type="number" min="0" step="1" required>
         </div>
+
         <div class="field">
           <label for="prize3">Third Prize (₦)</label>
           <input id="prize3" type="number" min="0" step="1" required>
         </div>
       </div>
+
       <button type="submit">Save Prize Settings</button>
     </form>
+
     <p class="note">
       Prize values are saved in Firestore at settings/prizes.
-      Your public homepage must also read this document to show updated prizes.
     </p>
   </section>
 
   <section class="panel">
     <h2>Manage Participants</h2>
+
     <div class="toolbar">
       <input id="search" type="search"
         placeholder="Search name, email or referral">
+
       <select id="statusFilter">
         <option value="all">All Statuses</option>
         <option value="pending">Pending</option>
         <option value="approved">Approved</option>
         <option value="rejected">Rejected</option>
       </select>
+
       <select id="sortBy">
         <option value="clicks">Most Clicks</option>
         <option value="newest">Newest First</option>
         <option value="name">Name A-Z</option>
       </select>
     </div>
+
     <p id="participantCount" class="muted">Loading participants...</p>
+
     <div class="toolbar">
       <button id="exportBtn" class="good">Export CSV</button>
       <button id="reloadBtn" class="secondary">Reload Participants</button>
     </div>
+
     <div class="table-wrap">
       <table>
         <thead>
@@ -214,16 +279,18 @@ td input,td select { width:100%; min-width:90px; margin:2px 0; }
         <tbody id="participantsBody"></tbody>
       </table>
     </div>
+
     <p class="note">
-      Edit the details and click Save Edits. Deleting a participant is permanent.
+      Edit participant details and click Save Edits.
+      Click counts are entered by the administrator, not tracked automatically.
     </p>
   </section>
 
   <section class="panel">
     <h2>Approved Leaderboard</h2>
     <p class="note">
-      Ranked using click counts stored in Firestore.
-      Click counts are not automatically tracked by this dashboard.
+      Only approved participants appear on the public leaderboard.
+      Changes to names and click counts are synchronized with Firestore.
     </p>
     <ol id="leaderboard"></ol>
   </section>
@@ -232,17 +299,28 @@ td input,td select { width:100%; min-width:90px; margin:2px 0; }
 </div>
 
 <script type="module">
-import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
-  getAuth, onAuthStateChanged,
-  signInWithEmailAndPassword, signOut
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 import {
-  getFirestore, collection, getDocs, doc, updateDoc,
-  deleteDoc, setDoc, getDoc, serverTimestamp
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  getDoc,
+  serverTimestamp,
+  writeBatch
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -259,42 +337,48 @@ const ADMIN_EMAIL = "akusu2841@gmail.com";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
 const $ = id => document.getElementById(id);
 
 let participants = [];
 let busy = false;
 
-function showMessage(text, type = "success") {
+function showMessage(message, type = "success") {
   const el = $("message");
-  el.textContent = text;
+  el.textContent = message;
   el.className = type;
 }
 
 function showError(error) {
   console.error(error);
+
   const code = error?.code || "error";
-  let text = `${code}: ${error?.message || "Operation failed."}`;
+  let message = `${code}: ${error?.message || "Operation failed."}`;
 
   if (code.includes("permission-denied")) {
-    text = "Permission denied. Check your published Firestore rules, admin email and Firebase project.";
+    message =
+      "Permission denied. Check your Firestore rules and admin account.";
   } else if (code.includes("unavailable")) {
-    text = "Firebase is unavailable. Check your internet connection.";
+    message = "Firebase is unavailable. Check your internet connection.";
   } else if (code.includes("unauthenticated")) {
-    text = "Your login session expired. Please log in again.";
+    message = "Your login session expired. Please log in again.";
   }
 
-  showMessage(text, "error");
+  showMessage(message, "error");
 }
 
 function requireAdmin() {
-  if (!auth.currentUser ||
-      auth.currentUser.email !== ADMIN_EMAIL) {
+  if (
+    !auth.currentUser ||
+    auth.currentUser.email !== ADMIN_EMAIL
+  ) {
     throw new Error("Please log in with the configured admin account.");
   }
 }
 
 function setBusy(value) {
   busy = value;
+
   document.querySelectorAll("button").forEach(button => {
     button.disabled = value;
   });
@@ -302,12 +386,13 @@ function setBusy(value) {
 
 async function perform(action, successText) {
   if (busy) return;
+
   setBusy(true);
 
   try {
     requireAdmin();
     await action();
-    showMessage(successText);
+    showMessage(successText, "success");
   } catch (error) {
     showError(error);
   } finally {
@@ -326,8 +411,66 @@ function timestamp(value) {
 
 function dateText(value) {
   if (!value) return "—";
+
   const date = value?.toDate ? value.toDate() : new Date(value);
-  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString();
+
+  return Number.isNaN(date.getTime())
+    ? "—"
+    : date.toLocaleString();
+}
+
+/*
+  Synchronize one participant to the public leaderboard.
+  The public document contains only name and clicks.
+*/
+async function syncLeaderboard(participant) {
+  const leaderboardRef = doc(db, "leaderboard", participant.id);
+
+  if (participant.status === "approved") {
+    await setDoc(leaderboardRef, {
+      name: String(participant.name || "Unnamed"),
+      clicks: Math.max(0, Number(participant.clicks) || 0)
+    });
+  } else {
+    await deleteDoc(leaderboardRef);
+  }
+}
+
+/*
+  Repair/synchronize leaderboard entries when the admin loads
+  the dashboard. This also removes entries for participants
+  who are no longer approved.
+*/
+async function syncAllLeaderboard() {
+  const batch = writeBatch(db);
+  const approvedIds = new Set();
+
+  for (const participant of participants) {
+    const leaderboardRef = doc(db, "leaderboard", participant.id);
+
+    if (participant.status === "approved") {
+      approvedIds.add(participant.id);
+
+      batch.set(leaderboardRef, {
+        name: String(participant.name || "Unnamed"),
+        clicks: Math.max(0, Number(participant.clicks) || 0)
+      });
+    } else {
+      batch.delete(leaderboardRef);
+    }
+  }
+
+  const leaderboardSnapshot = await getDocs(
+    collection(db, "leaderboard")
+  );
+
+  leaderboardSnapshot.forEach(item => {
+    if (!approvedIds.has(item.id)) {
+      batch.delete(item.ref);
+    }
+  });
+
+  await batch.commit();
 }
 
 onAuthStateChanged(auth, async user => {
@@ -339,7 +482,10 @@ onAuthStateChanged(auth, async user => {
   }
 
   if (user.email !== ADMIN_EMAIL) {
-    showMessage("Access denied: this is not the configured admin account.", "error");
+    showMessage(
+      "Access denied: this is not the configured admin account.",
+      "error"
+    );
     await signOut(auth);
     return;
   }
@@ -365,6 +511,7 @@ $("loginForm").addEventListener("submit", async event => {
       $("email").value.trim(),
       $("password").value
     );
+
     $("password").value = "";
     showMessage("Login successful. Loading dashboard...", "info");
   } catch (error) {
@@ -382,11 +529,19 @@ $("logoutBtn").addEventListener("click", async () => {
 });
 
 $("refreshBtn").addEventListener("click", async () => {
-  try { await loadAll(); } catch (error) { showError(error); }
+  try {
+    await loadAll();
+  } catch (error) {
+    showError(error);
+  }
 });
 
 $("reloadBtn").addEventListener("click", async () => {
-  try { await loadAll(); } catch (error) { showError(error); }
+  try {
+    await loadAll();
+  } catch (error) {
+    showError(error);
+  }
 });
 
 async function loadAll() {
@@ -412,7 +567,16 @@ async function loadAll() {
   $("prize3").value = prizes.third ?? 20000;
 
   render();
-  showMessage(`Dashboard loaded. ${participants.length} participant(s) found.`);
+
+  /*
+    Synchronize the public leaderboard from the authoritative
+    participants collection.
+  */
+  await syncAllLeaderboard();
+
+  showMessage(
+    `Dashboard loaded. ${participants.length} participant(s) found.`
+  );
 }
 
 $("prizeForm").addEventListener("submit", async event => {
@@ -431,7 +595,9 @@ $("prizeForm").addEventListener("submit", async event => {
 
   await perform(async () => {
     await setDoc(doc(db, "settings", "prizes"), {
-      first, second, third,
+      first,
+      second,
+      third,
       updatedAt: serverTimestamp()
     });
   }, "Prize settings saved to Firebase.");
@@ -446,12 +612,19 @@ function filteredParticipants() {
   const filter = $("statusFilter").value;
   const sort = $("sortBy").value;
 
-  const result = participants.filter(p => {
-    const matchesText = [p.name, p.email, p.referral].some(
-      value => String(value || "").toLowerCase().includes(query)
+  const result = participants.filter(participant => {
+    const matchesText = [
+      participant.name,
+      participant.email,
+      participant.referral
+    ].some(value =>
+      String(value || "").toLowerCase().includes(query)
     );
-    const matchesStatus = filter === "all" ||
-      (p.status || "pending") === filter;
+
+    const matchesStatus =
+      filter === "all" ||
+      (participant.status || "pending") === filter;
+
     return matchesText && matchesStatus;
   });
 
@@ -459,9 +632,11 @@ function filteredParticipants() {
     if (sort === "newest") {
       return timestamp(b.submittedAt) - timestamp(a.submittedAt);
     }
+
     if (sort === "name") {
       return String(a.name || "").localeCompare(String(b.name || ""));
     }
+
     return (Number(b.clicks) || 0) - (Number(a.clicks) || 0);
   });
 
@@ -476,18 +651,26 @@ function cell(text) {
 
 function render() {
   $("totalCount").textContent = participants.length;
-  $("pendingCount").textContent =
-    participants.filter(p => (p.status || "pending") === "pending").length;
-  $("approvedCount").textContent =
-    participants.filter(p => p.status === "approved").length;
+
+  $("pendingCount").textContent = participants.filter(
+    participant => (participant.status || "pending") === "pending"
+  ).length;
+
+  $("approvedCount").textContent = participants.filter(
+    participant => participant.status === "approved"
+  ).length;
+
   $("clickTotal").textContent = participants.reduce(
-    (total, p) => total + Math.max(0, Number(p.clicks) || 0), 0
+    (total, participant) =>
+      total + Math.max(0, Number(participant.clicks) || 0),
+    0
   ).toLocaleString();
 
   const body = $("participantsBody");
   body.replaceChildren();
 
   const shown = filteredParticipants();
+
   $("participantCount").textContent =
     `Showing ${shown.length} of ${participants.length} participant(s).`;
 
@@ -513,6 +696,7 @@ function render() {
     const referral = document.createElement("input");
     referral.value = p.referral || "";
     referral.setAttribute("aria-label", "Referral link");
+
     referralCell.append(referral);
     tr.append(referralCell);
 
@@ -523,6 +707,7 @@ function render() {
     clicks.step = "1";
     clicks.value = Math.max(0, Number(p.clicks) || 0);
     clicks.setAttribute("aria-label", "Referral clicks");
+
     clicksCell.append(clicks);
     tr.append(clicksCell);
 
@@ -537,10 +722,12 @@ function render() {
     }
 
     status.value = ["pending", "approved", "rejected"].includes(p.status)
-      ? p.status : "pending";
+      ? p.status
+      : "pending";
 
     statusCell.append(status);
     tr.append(statusCell);
+
     tr.append(cell(dateText(p.submittedAt)));
 
     const actions = document.createElement("td");
@@ -554,6 +741,7 @@ function render() {
       const newEmail = email.value.trim();
       const newReferral = referral.value.trim();
       const newClicks = Number(clicks.value);
+      const newStatus = status.value;
 
       if (newName.length < 2 || newName.length > 100) {
         showMessage("Name must contain 2 to 100 characters.", "error");
@@ -571,65 +759,120 @@ function render() {
       }
 
       await perform(async () => {
-        await updateDoc(doc(db, "participants", p.id), {
+        const updatedParticipant = {
+          ...p,
           name: newName,
           email: newEmail,
           referral: newReferral,
           clicks: newClicks,
-          status: status.value
-        });
+          status: newStatus
+        };
 
-        Object.assign(p, {
+        /*
+          Save participant and leaderboard together where possible.
+          This prevents a successful participant update from being
+          reported as complete while the public leaderboard remains old.
+        */
+        const batch = writeBatch(db);
+
+        batch.update(doc(db, "participants", p.id), {
           name: newName,
           email: newEmail,
           referral: newReferral,
           clicks: newClicks,
-          status: status.value
+          status: newStatus
         });
 
+        const leaderboardRef = doc(db, "leaderboard", p.id);
+
+        if (newStatus === "approved") {
+          batch.set(leaderboardRef, {
+            name: newName,
+            clicks: newClicks
+          });
+        } else {
+          batch.delete(leaderboardRef);
+        }
+
+        await batch.commit();
+
+        Object.assign(p, updatedParticipant);
         render();
-      }, "Participant changes saved.");
+      }, "Participant changes and leaderboard saved.");
     });
 
     const approve = document.createElement("button");
     approve.textContent = "Approve";
     approve.className = "good";
+
     approve.addEventListener("click", async () => {
       await perform(async () => {
-        await updateDoc(doc(db, "participants", p.id), {
+        const updatedParticipant = {
+          ...p,
+          status: "approved"
+        };
+
+        const batch = writeBatch(db);
+
+        batch.update(doc(db, "participants", p.id), {
           status: "approved"
         });
-        p.status = "approved";
+
+        batch.set(doc(db, "leaderboard", p.id), {
+          name: String(p.name || "Unnamed"),
+          clicks: Math.max(0, Number(p.clicks) || 0)
+        });
+
+        await batch.commit();
+
+        Object.assign(p, updatedParticipant);
         render();
-      }, "Participant approved.");
+      }, "Participant approved and published to leaderboard.");
     });
 
     const reject = document.createElement("button");
     reject.textContent = "Reject";
     reject.className = "danger";
+
     reject.addEventListener("click", async () => {
       await perform(async () => {
-        await updateDoc(doc(db, "participants", p.id), {
+        const batch = writeBatch(db);
+
+        batch.update(doc(db, "participants", p.id), {
           status: "rejected"
         });
+
+        batch.delete(doc(db, "leaderboard", p.id));
+
+        await batch.commit();
+
         p.status = "rejected";
         render();
-      }, "Participant rejected.");
+      }, "Participant rejected and removed from public leaderboard.");
     });
 
     const remove = document.createElement("button");
     remove.textContent = "Delete";
     remove.className = "danger";
+
     remove.addEventListener("click", async () => {
       if (!confirm(
         `Permanently delete ${p.name || p.email || "this participant"}?`
-      )) return;
+      )) {
+        return;
+      }
 
       await perform(async () => {
-        await deleteDoc(doc(db, "participants", p.id));
+        const batch = writeBatch(db);
+
+        batch.delete(doc(db, "participants", p.id));
+        batch.delete(doc(db, "leaderboard", p.id));
+
+        await batch.commit();
+
         participants = participants.filter(item => item.id !== p.id);
         render();
-      }, "Participant deleted permanently.");
+      }, "Participant and leaderboard entry deleted.");
     });
 
     actions.append(save, approve, reject, remove);
@@ -645,7 +888,7 @@ function renderLeaderboard() {
   list.replaceChildren();
 
   const approved = participants
-    .filter(p => p.status === "approved")
+    .filter(participant => participant.status === "approved")
     .sort((a, b) =>
       (Number(b.clicks) || 0) - (Number(a.clicks) || 0)
     );
@@ -657,15 +900,17 @@ function renderLeaderboard() {
     return;
   }
 
-  approved.forEach((p, index) => {
+  approved.forEach((participant, index) => {
     const li = document.createElement("li");
     li.className = "leader-row";
 
     const name = document.createElement("span");
-    name.textContent = `${index + 1}. ${p.name || "Unnamed"} (${p.email || "no email"})`;
+    name.textContent =
+      `${index + 1}. ${participant.name || "Unnamed"} (${participant.email || "no email"})`;
 
     const clicks = document.createElement("strong");
-    clicks.textContent = `${Number(p.clicks) || 0} clicks`;
+    clicks.textContent =
+      `${Number(participant.clicks) || 0} clicks`;
 
     li.append(name, clicks);
     list.append(li);
@@ -678,30 +923,35 @@ $("exportBtn").addEventListener("click", () => {
 
     const rows = [
       ["Name", "Email", "Referral", "Clicks", "Status", "Submitted"],
-      ...filteredParticipants().map(p => [
-        p.name || "",
-        p.email || "",
-        p.referral || "",
-        Number(p.clicks) || 0,
-        p.status || "pending",
-        dateText(p.submittedAt)
+      ...filteredParticipants().map(participant => [
+        participant.name || "",
+        participant.email || "",
+        participant.referral || "",
+        Number(participant.clicks) || 0,
+        participant.status || "pending",
+        dateText(participant.submittedAt)
       ])
     ];
 
-    const csv = rows.map(row => row.map(value =>
-      `"${String(value).replace(/"/g, '""')}"`
-    ).join(",")).join("\r\n");
+    const csv = rows.map(row =>
+      row.map(value =>
+        `"${String(value).replace(/"/g, '""')}"`
+      ).join(",")
+    ).join("\r\n");
 
     const url = URL.createObjectURL(new Blob(
-      ["\ufeff" + csv], { type: "text/csv;charset=utf-8;" }
+      ["\ufeff" + csv],
+      { type: "text/csv;charset=utf-8;" }
     ));
 
     const link = document.createElement("a");
     link.href = url;
     link.download = "rhockstar-contest-participants.csv";
+
     document.body.append(link);
     link.click();
     link.remove();
+
     URL.revokeObjectURL(url);
   } catch (error) {
     showError(error);
