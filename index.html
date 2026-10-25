@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,9 +34,7 @@
       font-weight: bold;
     }
 
-    .logo span {
-      color: white;
-    }
+    .logo span { color: white; }
 
     .header-link {
       color: white;
@@ -69,9 +66,7 @@
       margin-bottom: 20px;
     }
 
-    h1 span {
-      color: #38bdf8;
-    }
+    h1 span { color: #38bdf8; }
 
     .hero p {
       max-width: 620px;
@@ -92,8 +87,11 @@
       cursor: pointer;
     }
 
-    .button:hover {
-      background: #7dd3fc;
+    .button:hover { background: #7dd3fc; }
+
+    .button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .section {
@@ -154,9 +152,7 @@
       padding: 25px;
     }
 
-    .field {
-      margin-bottom: 17px;
-    }
+    .field { margin-bottom: 17px; }
 
     label {
       display: block;
@@ -175,13 +171,9 @@
       font-size: 15px;
     }
 
-    input:focus {
-      border-color: #38bdf8;
-    }
+    input:focus { border-color: #38bdf8; }
 
-    .register-box .button {
-      width: 100%;
-    }
+    .register-box .button { width: 100%; }
 
     .notice {
       color: #94a3b8;
@@ -234,25 +226,11 @@
     }
 
     @media (max-width: 500px) {
-      header {
-        padding: 16px;
-      }
-
-      .logo {
-        font-size: 17px;
-      }
-
-      .hero {
-        padding-top: 50px;
-      }
-
-      .section {
-        padding: 35px 16px;
-      }
-
-      .register-box {
-        padding: 20px;
-      }
+      header { padding: 16px; }
+      .logo { font-size: 17px; }
+      .hero { padding-top: 50px; }
+      .section { padding: 35px 16px; }
+      .register-box { padding: 20px; }
     }
   </style>
 </head>
@@ -280,27 +258,29 @@
 
   <section class="section" id="prizes">
     <h2 class="section-title">Win Cash Prizes</h2>
-    <p class="section-subtitle">The top participants win the following prizes.</p>
+    <p class="section-subtitle">
+      The top participants win the following prizes.
+    </p>
 
     <div class="prizes">
       <div class="card">
         <div class="prize-icon">🏆</div>
         <div class="prize-position">1st Place</div>
-        <div class="prize-amount">₦100,000</div>
+        <div class="prize-amount" id="firstPrize">₦100,000</div>
         <p>Grand Prize</p>
       </div>
 
       <div class="card">
         <div class="prize-icon">🥈</div>
         <div class="prize-position">2nd Place</div>
-        <div class="prize-amount">₦50,000</div>
+        <div class="prize-amount" id="secondPrize">₦50,000</div>
         <p>Second Prize</p>
       </div>
 
       <div class="card">
         <div class="prize-icon">🥉</div>
         <div class="prize-position">3rd Place</div>
-        <div class="prize-amount">₦20,000</div>
+        <div class="prize-amount" id="thirdPrize">₦20,000</div>
         <p>Third Prize</p>
       </div>
     </div>
@@ -317,12 +297,16 @@
 
         <div class="field">
           <label for="name">Full Name</label>
-          <input id="name" type="text" placeholder="Enter your full name" required>
+          <input id="name" type="text"
+                 placeholder="Enter your full name"
+                 minlength="2" maxlength="100" required>
         </div>
 
         <div class="field">
           <label for="email">Email Address</label>
-          <input id="email" type="email" placeholder="Enter your email" required>
+          <input id="email" type="email"
+                 placeholder="Enter your email"
+                 maxlength="254" required>
         </div>
 
         <div class="field">
@@ -332,23 +316,23 @@
                  required>
         </div>
 
-        <button class="button" type="submit">Submit Registration</button>
+        <button class="button" type="submit">
+          Submit Registration
+        </button>
 
         <p class="notice">
-          Your entry will need approval before appearing on the official
+          Your entry needs approval before appearing on the official
           leaderboard. Submitting this form does not mean you have won a prize.
         </p>
 
-        <div id="message" role="status"></div>
+        <div id="message" role="status" aria-live="polite"></div>
       </form>
     </div>
   </section>
 
   <section class="section" id="leaderboard">
     <h2 class="section-title">Live Leaderboard</h2>
-    <p class="section-subtitle">
-      Follow the competition rankings.
-    </p>
+    <p class="section-subtitle">Follow the competition rankings.</p>
 
     <div class="leaderboard-wrap">
       <table>
@@ -359,11 +343,10 @@
             <th>Tracked Clicks</th>
           </tr>
         </thead>
+
         <tbody id="leaderboardBody">
           <tr>
-            <td colspan="3" class="empty">
-              The official leaderboard will appear here after setup.
-            </td>
+            <td colspan="3" class="empty">Loading leaderboard...</td>
           </tr>
         </tbody>
       </table>
@@ -374,80 +357,200 @@
     © <span id="year"></span> Rhockstar Connect. All rights reserved.
   </footer>
 
-  
-<script type="module">
-  import { db } from "./firebase.js";
-  import {
-    collection,
-    addDoc,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+  <script type="module">
+    import { db } from "./firebase.js";
 
-  document.getElementById("year").textContent =
-    new Date().getFullYear();
+    import {
+      collection,
+      addDoc,
+      serverTimestamp,
+      doc,
+      onSnapshot,
+      query,
+      orderBy,
+      limit
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-  const form = document.getElementById("registrationForm");
-  const message = document.getElementById("message");
-  const submitButton = form.querySelector('button[type="submit"]');
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
 
-  form.addEventListener("submit", async function(event) {
-    event.preventDefault();
+    const form = document.getElementById("registrationForm");
+    const message = document.getElementById("message");
+    const submitButton = form.querySelector('button[type="submit"]');
+    const leaderboardBody = document.getElementById("leaderboardBody");
 
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const referral = document.getElementById("referral").value.trim();
+    const money = value => {
+      const amount = Number(value);
+      if (!Number.isFinite(amount) || amount < 0) return "—";
 
-    let url;
-
-    try {
-      url = new URL(referral);
-
-      if (
-        !["https:", "http:"].includes(url.protocol) ||
-        !url.hostname.includes(".")
-      ) {
-        throw new Error("Invalid link");
-      }
-    } catch {
-      message.style.color = "#f87171";
-      message.textContent = "Please enter a valid referral link.";
-      return;
-    }
-
-    submitButton.disabled = true;
-    submitButton.textContent = "Submitting...";
-    message.style.color = "#cbd5e1";
-    message.textContent = "Submitting your registration...";
-
-    try {
-      await addDoc(collection(db, "participants"), {
-        name: name,
-        email: email,
-        referral: url.href,
-        status: "pending",
-        clicks: 0,
-        submittedAt: serverTimestamp()
+      return "₦" + amount.toLocaleString("en-NG", {
+        maximumFractionDigits: 2
       });
+    };
 
-      message.style.color = "#4ade80";
-      message.textContent =
-        "Registration submitted successfully! Your entry is pending admin approval.";
+    // Live prize updates from Firebase.
+    onSnapshot(
+      doc(db, "settings", "prizes"),
+      snapshot => {
+        if (!snapshot.exists()) return;
 
-      form.reset();
+        const prizes = snapshot.data();
 
-    } catch (error) {
-      console.error("Registration error:", error);
+        if (prizes.first !== undefined) {
+          document.getElementById("firstPrize").textContent =
+            money(prizes.first);
+        }
 
-      message.style.color = "#f87171";
-      message.textContent =
-        "Registration failed. Please try again later.";
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = "Submit Registration";
+        if (prizes.second !== undefined) {
+          document.getElementById("secondPrize").textContent =
+            money(prizes.second);
+        }
+
+        if (prizes.third !== undefined) {
+          document.getElementById("thirdPrize").textContent =
+            money(prizes.third);
+        }
+      },
+      error => {
+        console.error("Prize loading error:", error);
+      }
+    );
+
+    // Public-safe leaderboard only. Never query participants publicly.
+    const leaderboardQuery = query(
+      collection(db, "leaderboard"),
+      orderBy("clicks", "desc"),
+      limit(100)
+    );
+
+    onSnapshot(
+      leaderboardQuery,
+      snapshot => {
+        leaderboardBody.replaceChildren();
+
+        if (snapshot.empty) {
+          showLeaderboardMessage(
+            "No approved participants have been published yet."
+          );
+          return;
+        }
+
+        const participants = snapshot.docs
+          .map(item => item.data())
+          .filter(person =>
+            typeof person.name === "string" &&
+            Number.isFinite(Number(person.clicks)) &&
+            Number(person.clicks) >= 0
+          )
+          .sort((a, b) => Number(b.clicks) - Number(a.clicks));
+
+        if (!participants.length) {
+          showLeaderboardMessage("No leaderboard entries are available.");
+          return;
+        }
+
+        participants.forEach((person, index) => {
+          const row = document.createElement("tr");
+
+          const rankCell = document.createElement("td");
+          rankCell.textContent = String(index + 1);
+
+          const nameCell = document.createElement("td");
+          nameCell.textContent = person.name;
+
+          const clicksCell = document.createElement("td");
+          clicksCell.textContent = Number(person.clicks).toLocaleString();
+
+          row.append(rankCell, nameCell, clicksCell);
+          leaderboardBody.appendChild(row);
+        });
+      },
+      error => {
+        console.error("Leaderboard loading error:", error);
+
+        showLeaderboardMessage(
+          "Unable to load the leaderboard right now."
+        );
+      }
+    );
+
+    function showLeaderboardMessage(text) {
+      leaderboardBody.replaceChildren();
+
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+
+      cell.colSpan = 3;
+      cell.className = "empty";
+      cell.textContent = text;
+
+      row.appendChild(cell);
+      leaderboardBody.appendChild(row);
     }
-  });
-</script>
 
+    // Registration form.
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const referral = document.getElementById("referral").value.trim();
+
+      let url;
+
+      try {
+        url = new URL(referral);
+
+        if (
+          !["https:", "http:"].includes(url.protocol) ||
+          !url.hostname.includes(".")
+        ) {
+          throw new Error("Invalid referral link");
+        }
+      } catch {
+        message.style.color = "#f87171";
+        message.textContent = "Please enter a valid referral link.";
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+      message.style.color = "#cbd5e1";
+      message.textContent = "Submitting your registration...";
+
+      try {
+        await addDoc(collection(db, "participants"), {
+          name,
+          email,
+          referral: url.href,
+          status: "pending",
+          clicks: 0,
+          submittedAt: serverTimestamp()
+        });
+
+        message.style.color = "#4ade80";
+        message.textContent =
+          "Registration submitted successfully! Your entry is pending admin approval.";
+
+        form.reset();
+      } catch (error) {
+        console.error("Registration error:", error);
+
+        message.style.color = "#f87171";
+
+        if (error.code === "permission-denied") {
+          message.textContent =
+            "Registration was blocked by Firebase security rules. Please contact the administrator.";
+        } else {
+          message.textContent =
+            "Registration failed. Please try again later.";
+        }
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Registration";
+      }
+    });
+  </script>
 
 </body>
 </html>
