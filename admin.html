@@ -2,132 +2,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rhockstar Referral Contest Admin</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #0f172a; color: #e2e8f0;
-    }
-    .container { max-width: 1100px; margin: auto; }
-    h1, h2 { color: #38bdf8; }
-    .panel {
-      background: #1e293b; padding: 20px;
-      margin: 18px 0; border-radius: 12px;
-    }
-    input, select, button {
-      padding: 10px; margin: 5px 3px;
-      border-radius: 6px; border: 1px solid #475569;
-      font-size: 14px;
-    }
-    input, select { background: #0f172a; color: white; max-width: 100%; }
-    button { cursor: pointer; background: #2563eb; color: white; border: 0; }
-    button:hover { background: #1d4ed8; }
-    .danger { background: #dc2626; }
-    .success { color: #4ade80; }
-    .error { color: #fca5a5; white-space: pre-wrap; }
-    .muted { color: #94a3b8; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 700px; }
-    th, td { padding: 10px; border-bottom: 1px solid #334155; text-align: left; }
-    th { color: #38bdf8; }
-    .hidden { display: none; }
-    .status { font-weight: bold; }
-    @media(max-width:600px) {
-      body { padding: 10px; }
-      .panel { padding: 12px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rhockstar Referral Contest | Admin</title>
+<style>
+:root {
+  --bg:#0b1120; --panel:#111c30; --line:#2a3b55;
+  --text:#e5edf8; --muted:#9aabc2; --blue:#38bdf8;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; padding:20px; background:var(--bg);
+  color:var(--text); font:15px/1.5 Arial,sans-serif;
+}
+.wrap { max-width:1400px; margin:auto; }
+h1,h2 { color:var(--blue); }
+.panel {
+  background:var(--panel); border:1px solid var(--line);
+  border-radius:14px; padding:20px; margin:18px 0;
+}
+input,select,button {
+  font:inherit; padding:10px; margin:4px;
+  border-radius:7px; max-width:100%;
+}
+input,select {
+  background:var(--bg); color:white;
+  border:1px solid #40516b;
+}
+button {
+  background:#2563eb; color:white; border:0;
+  cursor:pointer; font-weight:bold;
+}
+button:disabled { opacity:.5; cursor:wait; }
+.danger { background:#be123c; }
+.good { background:#15803d; }
+.secondary { background:#334155; }
+.muted { color:var(--muted); }
+.hidden { display:none!important; }
+#message {
+  padding:10px; margin:12px 0; white-space:pre-wrap;
+}
+#message:empty { display:none; }
+#message.success { color:#86efac; }
+#message.error { color:#fecdd3; background:#4c1420; }
+#message.info { color:#bfdbfe; background:#172554; }
+.toolbar {
+  display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+}
+.toolbar input { flex:1; min-width:180px; }
+.grid {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+.stat {
+  background:#17243a; border:1px solid var(--line);
+  padding:16px; border-radius:12px;
+}
+.stat strong { display:block; font-size:25px; color:var(--blue); }
+.stat span { color:var(--muted); font-size:13px; }
+.row {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.field { display:flex; flex-direction:column; gap:5px; margin:8px 0; }
+.field input { width:100%; margin:0; }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; min-width:900px; }
+th,td {
+  padding:10px; border-bottom:1px solid #334155;
+  text-align:left; vertical-align:top;
+}
+th { color:var(--blue); }
+td input,td select { width:100%; min-width:90px; margin:2px 0; }
+.actions { min-width:220px; }
+.actions button { font-size:12px; padding:7px; }
+.identity { min-width:170px; }
+.note { color:var(--muted); font-size:13px; }
+.login { max-width:460px; margin:35px auto; }
+.login input,.login button { width:100%; margin:5px 0; }
+.leader-row {
+  display:flex; justify-content:space-between; gap:12px;
+  padding:8px 0; border-bottom:1px solid var(--line);
+}
+@media(max-width:750px) {
+  body { padding:10px; }
+  .panel { padding:13px; }
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .row { grid-template-columns:1fr; }
+}
+@media(max-width:420px) {
+  .grid { grid-template-columns:1fr; }
+}
+</style>
 </head>
 <body>
-<div class="container">
-  <h1>Rhockstar Referral Contest</h1>
-  <p class="muted">Administrator dashboard</p>
+<div class="wrap">
 
-  <div id="message" role="status" aria-live="polite"></div>
+<header class="toolbar">
+  <div style="flex:1">
+    <h1>Rhockstar Referral Contest</h1>
+    <p class="muted">Administrator control panel</p>
+  </div>
+  <div id="headerActions" class="toolbar hidden">
+    <span id="loggedInAs" class="muted"></span>
+    <button id="refreshBtn" class="secondary">Refresh</button>
+    <button id="logoutBtn" class="danger">Log out</button>
+  </div>
+</header>
 
-  <section id="loginPanel" class="panel">
-    <h2>Admin Login</h2>
-    <form id="loginForm">
-      <input id="email" type="email" placeholder="Admin email"
-             value="akusu2841@gmail.com" required>
-      <input id="password" type="password" placeholder="Password" required>
-      <button type="submit">Log In</button>
-    </form>
+<div id="message" role="status" aria-live="polite"></div>
+
+<section id="loginPanel" class="panel login">
+  <h2>Admin Login</h2>
+  <form id="loginForm">
+    <div class="field">
+      <label for="email">Admin email</label>
+      <input id="email" type="email"
+        value="akusu2841@gmail.com"
+        autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password"
+        autocomplete="current-password" required>
+    </div>
+    <button type="submit">Log In</button>
+  </form>
+  <p class="note">Administrator access only.</p>
+</section>
+
+<main id="dashboard" class="hidden">
+
+  <section class="grid">
+    <div class="stat">
+      <span>Total Participants</span>
+      <strong id="totalCount">0</strong>
+    </div>
+    <div class="stat">
+      <span>Pending</span>
+      <strong id="pendingCount">0</strong>
+    </div>
+    <div class="stat">
+      <span>Approved</span>
+      <strong id="approvedCount">0</strong>
+    </div>
+    <div class="stat">
+      <span>Total Recorded Clicks</span>
+      <strong id="clickTotal">0</strong>
+    </div>
   </section>
 
-  <main id="dashboard" class="hidden">
-    <div class="panel">
-      <span id="loggedInAs"></span>
-      <button id="refreshBtn">Refresh Data</button>
-      <button id="logoutBtn" class="danger">Log Out</button>
-    </div>
+  <section class="panel">
+    <h2>Prize Settings</h2>
+    <form id="prizeForm">
+      <div class="row">
+        <div class="field">
+          <label for="prize1">First Prize (₦)</label>
+          <input id="prize1" type="number" min="0" step="1" required>
+        </div>
+        <div class="field">
+          <label for="prize2">Second Prize (₦)</label>
+          <input id="prize2" type="number" min="0" step="1" required>
+        </div>
+        <div class="field">
+          <label for="prize3">Third Prize (₦)</label>
+          <input id="prize3" type="number" min="0" step="1" required>
+        </div>
+      </div>
+      <button type="submit">Save Prize Settings</button>
+    </form>
+    <p class="note">
+      Prize values are saved in Firestore at settings/prizes.
+      Your public homepage must also read this document to show updated prizes.
+    </p>
+  </section>
 
-    <div class="panel">
-      <h2>Prize Settings</h2>
-      <form id="prizeForm">
-        <label>First prize (₦)
-          <input id="prize1" type="number" min="0" required>
-        </label>
-        <label>Second prize (₦)
-          <input id="prize2" type="number" min="0" required>
-        </label>
-        <label>Third prize (₦)
-          <input id="prize3" type="number" min="0" required>
-        </label>
-        <button type="submit">Save Prize Settings</button>
-      </form>
-    </div>
-
-    <div class="panel">
-      <h2>Participants</h2>
+  <section class="panel">
+    <h2>Manage Participants</h2>
+    <div class="toolbar">
       <input id="search" type="search"
-             placeholder="Search name or email">
+        placeholder="Search name, email or referral">
       <select id="statusFilter">
-        <option value="all">All statuses</option>
+        <option value="all">All Statuses</option>
         <option value="pending">Pending</option>
         <option value="approved">Approved</option>
         <option value="rejected">Rejected</option>
       </select>
-      <p id="participantCount" class="muted">Loading participants...</p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name / Email</th>
-              <th>Referral</th>
-              <th>Clicks</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="participantsBody"></tbody>
-        </table>
-      </div>
+      <select id="sortBy">
+        <option value="clicks">Most Clicks</option>
+        <option value="newest">Newest First</option>
+        <option value="name">Name A-Z</option>
+      </select>
     </div>
+    <p id="participantCount" class="muted">Loading participants...</p>
+    <div class="toolbar">
+      <button id="exportBtn" class="good">Export CSV</button>
+      <button id="reloadBtn" class="secondary">Reload Participants</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name / Email</th>
+            <th>Referral Link</th>
+            <th>Clicks</th>
+            <th>Status</th>
+            <th>Date Registered</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="participantsBody"></tbody>
+      </table>
+    </div>
+    <p class="note">
+      Edit the details and click Save Edits. Deleting a participant is permanent.
+    </p>
+  </section>
 
-    <div class="panel">
-      <h2>Leaderboard</h2>
-      <ol id="leaderboard"></ol>
-    </div>
-  </main>
+  <section class="panel">
+    <h2>Approved Leaderboard</h2>
+    <p class="note">
+      Ranked using click counts stored in Firestore.
+      Click counts are not automatically tracked by this dashboard.
+    </p>
+    <ol id="leaderboard"></ol>
+  </section>
+
+</main>
 </div>
 
 <script type="module">
-import { initializeApp } from
-  "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-  signOut
+  getAuth, onAuthStateChanged,
+  signInWithEmailAndPassword, signOut
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 import {
   getFirestore, collection, getDocs, doc, updateDoc,
-  setDoc, getDoc, serverTimestamp
+  deleteDoc, setDoc, getDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -144,83 +259,116 @@ const ADMIN_EMAIL = "akusu2841@gmail.com";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 const $ = id => document.getElementById(id);
+
 let participants = [];
 let busy = false;
 
-function showMessage(text, isError = false) {
+function showMessage(text, type = "success") {
   const el = $("message");
   el.textContent = text;
-  el.className = isError ? "error" : "success";
+  el.className = type;
 }
 
-function errorMessage(error) {
+function showError(error) {
   console.error(error);
-  const messages = {
-    "permission-denied":
-      "Permission denied. Check your published Firestore rules and admin email.",
-    "unavailable":
-      "Firebase is temporarily unavailable. Check your internet connection.",
-    "not-found":
-      "The Firebase document was not found. Refresh the dashboard."
-  };
-  showMessage(
-    messages[error.code] ||
-    `${error.code || "Error"}: ${error.message || "Operation failed"}`,
-    true
-  );
+  const code = error?.code || "error";
+  let text = `${code}: ${error?.message || "Operation failed."}`;
+
+  if (code.includes("permission-denied")) {
+    text = "Permission denied. Check your published Firestore rules, admin email and Firebase project.";
+  } else if (code.includes("unavailable")) {
+    text = "Firebase is unavailable. Check your internet connection.";
+  } else if (code.includes("unauthenticated")) {
+    text = "Your login session expired. Please log in again.";
+  }
+
+  showMessage(text, "error");
+}
+
+function requireAdmin() {
+  if (!auth.currentUser ||
+      auth.currentUser.email !== ADMIN_EMAIL) {
+    throw new Error("Please log in with the configured admin account.");
+  }
 }
 
 function setBusy(value) {
   busy = value;
-  document.querySelectorAll("button, input, select").forEach(el => {
-    if (el.id !== "search" && el.id !== "statusFilter") {
-      el.disabled = value;
-    }
+  document.querySelectorAll("button").forEach(button => {
+    button.disabled = value;
   });
 }
 
-function requireAdmin(user) {
-  if (!user || user.email !== ADMIN_EMAIL) {
-    throw new Error("This account is not the configured admin account.");
+async function perform(action, successText) {
+  if (busy) return;
+  setBusy(true);
+
+  try {
+    requireAdmin();
+    await action();
+    showMessage(successText);
+  } catch (error) {
+    showError(error);
+  } finally {
+    setBusy(false);
   }
+}
+
+function timestamp(value) {
+  try {
+    if (value?.toDate) return value.toDate().getTime();
+    return new Date(value || 0).getTime() || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function dateText(value) {
+  if (!value) return "—";
+  const date = value?.toDate ? value.toDate() : new Date(value);
+  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString();
 }
 
 onAuthStateChanged(auth, async user => {
   if (!user) {
     $("loginPanel").classList.remove("hidden");
     $("dashboard").classList.add("hidden");
+    $("headerActions").classList.add("hidden");
     return;
   }
 
   if (user.email !== ADMIN_EMAIL) {
-    showMessage("Access denied: this is not the configured admin email.", true);
+    showMessage("Access denied: this is not the configured admin account.", "error");
     await signOut(auth);
     return;
   }
 
   $("loginPanel").classList.add("hidden");
   $("dashboard").classList.remove("hidden");
-  $("loggedInAs").textContent = "Logged in as " + user.email;
+  $("headerActions").classList.remove("hidden");
+  $("loggedInAs").textContent = "Logged in: " + user.email;
 
   try {
     await loadAll();
   } catch (error) {
-    errorMessage(error);
+    showError(error);
   }
 });
 
 $("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
+
   try {
     await signInWithEmailAndPassword(
-      auth, $("email").value.trim(), $("password").value
+      auth,
+      $("email").value.trim(),
+      $("password").value
     );
     $("password").value = "";
-    showMessage("Login successful.");
+    showMessage("Login successful. Loading dashboard...", "info");
   } catch (error) {
-    errorMessage(error);
+    showError(error);
   }
 });
 
@@ -229,159 +377,42 @@ $("logoutBtn").addEventListener("click", async () => {
     await signOut(auth);
     showMessage("Logged out.");
   } catch (error) {
-    errorMessage(error);
+    showError(error);
   }
 });
 
-async function loadAll() {
-  requireAdmin(auth.currentUser);
-  showMessage("Loading data...");
+$("refreshBtn").addEventListener("click", async () => {
+  try { await loadAll(); } catch (error) { showError(error); }
+});
 
-  const [participantSnapshot, prizeSnapshot] = await Promise.all([
+$("reloadBtn").addEventListener("click", async () => {
+  try { await loadAll(); } catch (error) { showError(error); }
+});
+
+async function loadAll() {
+  requireAdmin();
+  showMessage("Loading data...", "info");
+
+  const [people, prizeDoc] = await Promise.all([
     getDocs(collection(db, "participants")),
     getDoc(doc(db, "settings", "prizes"))
   ]);
 
-  participants = participantSnapshot.docs.map(item => ({
+  participants = people.docs.map(item => ({
     id: item.id,
     ...item.data()
   }));
 
-  const prizes = prizeSnapshot.exists()
-    ? prizeSnapshot.data()
+  const prizes = prizeDoc.exists()
+    ? prizeDoc.data()
     : { first: 100000, second: 50000, third: 20000 };
 
   $("prize1").value = prizes.first ?? 100000;
   $("prize2").value = prizes.second ?? 50000;
   $("prize3").value = prizes.third ?? 20000;
 
-  renderParticipants();
-  renderLeaderboard();
-  showMessage(`Loaded ${participants.length} participant(s).`);
-}
-
-$("refreshBtn").addEventListener("click", async () => {
-  try {
-    await loadAll();
-  } catch (error) {
-    errorMessage(error);
-  }
-});
-
-$("search").addEventListener("input", renderParticipants);
-$("statusFilter").addEventListener("change", renderParticipants);
-
-function renderParticipants() {
-  const search = $("search").value.trim().toLowerCase();
-  const filter = $("statusFilter").value;
-  const body = $("participantsBody");
-  body.replaceChildren();
-
-  const filtered = participants.filter(p => {
-    const matchesSearch =
-      String(p.name || "").toLowerCase().includes(search) ||
-      String(p.email || "").toLowerCase().includes(search);
-    return matchesSearch && (filter === "all" || p.status === filter);
-  });
-
-  $("participantCount").textContent =
-    `${filtered.length} participant(s) shown; ${participants.length} total.`;
-
-  for (const p of filtered) {
-    const tr = document.createElement("tr");
-
-    const identity = document.createElement("td");
-    identity.textContent = `${p.name || "Unnamed"}\n${p.email || ""}`;
-    tr.append(identity);
-
-    const referral = document.createElement("td");
-    const referralLink = String(p.referral || "");
-    referral.textContent = referralLink;
-    tr.append(referral);
-
-    const clicksCell = document.createElement("td");
-    const clicks = document.createElement("input");
-    clicks.type = "number";
-    clicks.min = "0";
-    clicks.step = "1";
-    clicks.value = Math.max(0, Number(p.clicks) || 0);
-    clicks.style.width = "90px";
-    clicksCell.append(clicks);
-    tr.append(clicksCell);
-
-    const statusCell = document.createElement("td");
-    statusCell.textContent = p.status || "pending";
-    statusCell.className = "status";
-    tr.append(statusCell);
-
-    const actions = document.createElement("td");
-
-    const saveClicks = document.createElement("button");
-    saveClicks.textContent = "Save Clicks";
-    saveClicks.addEventListener("click", async () => {
-      const value = Number(clicks.value);
-      if (!Number.isSafeInteger(value) || value < 0) {
-        showMessage("Clicks must be a whole number of zero or more.", true);
-        return;
-      }
-      await perform(async () => {
-        await updateDoc(doc(db, "participants", p.id), { clicks: value });
-        p.clicks = value;
-      }, "Referral clicks saved.");
-    });
-    actions.append(saveClicks);
-
-    for (const status of ["approved", "pending", "rejected"]) {
-      const button = document.createElement("button");
-      button.textContent =
-        status === "approved" ? "Approve" :
-        status === "rejected" ? "Reject" : "Set Pending";
-      if (status === "rejected") button.className = "danger";
-
-      button.addEventListener("click", async () => {
-        await perform(async () => {
-          await updateDoc(doc(db, "participants", p.id), { status });
-          p.status = status;
-          renderParticipants();
-          renderLeaderboard();
-        }, `Participant ${status}.`);
-      });
-      actions.append(button);
-    }
-
-    tr.append(actions);
-    body.append(tr);
-  }
-}
-
-function renderLeaderboard() {
-  const list = $("leaderboard");
-  list.replaceChildren();
-
-  participants
-    .filter(p => p.status === "approved")
-    .sort((a, b) => (Number(b.clicks) || 0) - (Number(a.clicks) || 0))
-    .forEach(p => {
-      const li = document.createElement("li");
-      li.textContent =
-        `${p.name || "Unnamed"} — ${Number(p.clicks) || 0} clicks`;
-      list.append(li);
-    });
-}
-
-async function perform(operation, successText) {
-  if (busy) return;
-  setBusy(true);
-  try {
-    requireAdmin(auth.currentUser);
-    await operation();
-    renderLeaderboard();
-    showMessage(successText);
-  } catch (error) {
-    errorMessage(error);
-  } finally {
-    setBusy(false);
-  }
+  render();
+  showMessage(`Dashboard loaded. ${participants.length} participant(s) found.`);
 }
 
 $("prizeForm").addEventListener("submit", async event => {
@@ -394,7 +425,7 @@ $("prizeForm").addEventListener("submit", async event => {
   if (![first, second, third].every(
     value => Number.isSafeInteger(value) && value >= 0
   )) {
-    showMessage("Enter valid whole-number prize amounts.", true);
+    showMessage("Enter valid whole-number prize amounts.", "error");
     return;
   }
 
@@ -403,7 +434,278 @@ $("prizeForm").addEventListener("submit", async event => {
       first, second, third,
       updatedAt: serverTimestamp()
     });
-  }, "Prize settings saved successfully.");
+  }, "Prize settings saved to Firebase.");
+});
+
+$("search").addEventListener("input", render);
+$("statusFilter").addEventListener("change", render);
+$("sortBy").addEventListener("change", render);
+
+function filteredParticipants() {
+  const query = $("search").value.trim().toLowerCase();
+  const filter = $("statusFilter").value;
+  const sort = $("sortBy").value;
+
+  const result = participants.filter(p => {
+    const matchesText = [p.name, p.email, p.referral].some(
+      value => String(value || "").toLowerCase().includes(query)
+    );
+    const matchesStatus = filter === "all" ||
+      (p.status || "pending") === filter;
+    return matchesText && matchesStatus;
+  });
+
+  result.sort((a, b) => {
+    if (sort === "newest") {
+      return timestamp(b.submittedAt) - timestamp(a.submittedAt);
+    }
+    if (sort === "name") {
+      return String(a.name || "").localeCompare(String(b.name || ""));
+    }
+    return (Number(b.clicks) || 0) - (Number(a.clicks) || 0);
+  });
+
+  return result;
+}
+
+function cell(text) {
+  const td = document.createElement("td");
+  td.textContent = text;
+  return td;
+}
+
+function render() {
+  $("totalCount").textContent = participants.length;
+  $("pendingCount").textContent =
+    participants.filter(p => (p.status || "pending") === "pending").length;
+  $("approvedCount").textContent =
+    participants.filter(p => p.status === "approved").length;
+  $("clickTotal").textContent = participants.reduce(
+    (total, p) => total + Math.max(0, Number(p.clicks) || 0), 0
+  ).toLocaleString();
+
+  const body = $("participantsBody");
+  body.replaceChildren();
+
+  const shown = filteredParticipants();
+  $("participantCount").textContent =
+    `Showing ${shown.length} of ${participants.length} participant(s).`;
+
+  for (const p of shown) {
+    const tr = document.createElement("tr");
+
+    const identity = document.createElement("td");
+    identity.className = "identity";
+
+    const name = document.createElement("input");
+    name.value = p.name || "";
+    name.setAttribute("aria-label", "Participant name");
+
+    const email = document.createElement("input");
+    email.type = "email";
+    email.value = p.email || "";
+    email.setAttribute("aria-label", "Participant email");
+
+    identity.append(name, email);
+    tr.append(identity);
+
+    const referralCell = document.createElement("td");
+    const referral = document.createElement("input");
+    referral.value = p.referral || "";
+    referral.setAttribute("aria-label", "Referral link");
+    referralCell.append(referral);
+    tr.append(referralCell);
+
+    const clicksCell = document.createElement("td");
+    const clicks = document.createElement("input");
+    clicks.type = "number";
+    clicks.min = "0";
+    clicks.step = "1";
+    clicks.value = Math.max(0, Number(p.clicks) || 0);
+    clicks.setAttribute("aria-label", "Referral clicks");
+    clicksCell.append(clicks);
+    tr.append(clicksCell);
+
+    const statusCell = document.createElement("td");
+    const status = document.createElement("select");
+
+    for (const value of ["pending", "approved", "rejected"]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value[0].toUpperCase() + value.slice(1);
+      status.append(option);
+    }
+
+    status.value = ["pending", "approved", "rejected"].includes(p.status)
+      ? p.status : "pending";
+
+    statusCell.append(status);
+    tr.append(statusCell);
+    tr.append(cell(dateText(p.submittedAt)));
+
+    const actions = document.createElement("td");
+    actions.className = "actions";
+
+    const save = document.createElement("button");
+    save.textContent = "Save Edits";
+
+    save.addEventListener("click", async () => {
+      const newName = name.value.trim();
+      const newEmail = email.value.trim();
+      const newReferral = referral.value.trim();
+      const newClicks = Number(clicks.value);
+
+      if (newName.length < 2 || newName.length > 100) {
+        showMessage("Name must contain 2 to 100 characters.", "error");
+        return;
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+        showMessage("Enter a valid email address.", "error");
+        return;
+      }
+
+      if (!Number.isSafeInteger(newClicks) || newClicks < 0) {
+        showMessage("Clicks must be a non-negative whole number.", "error");
+        return;
+      }
+
+      await perform(async () => {
+        await updateDoc(doc(db, "participants", p.id), {
+          name: newName,
+          email: newEmail,
+          referral: newReferral,
+          clicks: newClicks,
+          status: status.value
+        });
+
+        Object.assign(p, {
+          name: newName,
+          email: newEmail,
+          referral: newReferral,
+          clicks: newClicks,
+          status: status.value
+        });
+
+        render();
+      }, "Participant changes saved.");
+    });
+
+    const approve = document.createElement("button");
+    approve.textContent = "Approve";
+    approve.className = "good";
+    approve.addEventListener("click", async () => {
+      await perform(async () => {
+        await updateDoc(doc(db, "participants", p.id), {
+          status: "approved"
+        });
+        p.status = "approved";
+        render();
+      }, "Participant approved.");
+    });
+
+    const reject = document.createElement("button");
+    reject.textContent = "Reject";
+    reject.className = "danger";
+    reject.addEventListener("click", async () => {
+      await perform(async () => {
+        await updateDoc(doc(db, "participants", p.id), {
+          status: "rejected"
+        });
+        p.status = "rejected";
+        render();
+      }, "Participant rejected.");
+    });
+
+    const remove = document.createElement("button");
+    remove.textContent = "Delete";
+    remove.className = "danger";
+    remove.addEventListener("click", async () => {
+      if (!confirm(
+        `Permanently delete ${p.name || p.email || "this participant"}?`
+      )) return;
+
+      await perform(async () => {
+        await deleteDoc(doc(db, "participants", p.id));
+        participants = participants.filter(item => item.id !== p.id);
+        render();
+      }, "Participant deleted permanently.");
+    });
+
+    actions.append(save, approve, reject, remove);
+    tr.append(actions);
+    body.append(tr);
+  }
+
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const list = $("leaderboard");
+  list.replaceChildren();
+
+  const approved = participants
+    .filter(p => p.status === "approved")
+    .sort((a, b) =>
+      (Number(b.clicks) || 0) - (Number(a.clicks) || 0)
+    );
+
+  if (!approved.length) {
+    const li = document.createElement("li");
+    li.textContent = "No approved participants yet.";
+    list.append(li);
+    return;
+  }
+
+  approved.forEach((p, index) => {
+    const li = document.createElement("li");
+    li.className = "leader-row";
+
+    const name = document.createElement("span");
+    name.textContent = `${index + 1}. ${p.name || "Unnamed"} (${p.email || "no email"})`;
+
+    const clicks = document.createElement("strong");
+    clicks.textContent = `${Number(p.clicks) || 0} clicks`;
+
+    li.append(name, clicks);
+    list.append(li);
+  });
+}
+
+$("exportBtn").addEventListener("click", () => {
+  try {
+    requireAdmin();
+
+    const rows = [
+      ["Name", "Email", "Referral", "Clicks", "Status", "Submitted"],
+      ...filteredParticipants().map(p => [
+        p.name || "",
+        p.email || "",
+        p.referral || "",
+        Number(p.clicks) || 0,
+        p.status || "pending",
+        dateText(p.submittedAt)
+      ])
+    ];
+
+    const csv = rows.map(row => row.map(value =>
+      `"${String(value).replace(/"/g, '""')}"`
+    ).join(",")).join("\r\n");
+
+    const url = URL.createObjectURL(new Blob(
+      ["\ufeff" + csv], { type: "text/csv;charset=utf-8;" }
+    ));
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "rhockstar-contest-participants.csv";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    showError(error);
+  }
 });
 </script>
 </body>
