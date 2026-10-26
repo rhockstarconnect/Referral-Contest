@@ -11,6 +11,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
   authDomain: "rcreferral-contest.firebaseapp.com",
+  databaseURL: "https://rcreferral-contest-default-rtdb.firebaseio.com",
   projectId: "rcreferral-contest",
   storageBucket: "rcreferral-contest.firebasestorage.app",
   messagingSenderId: "137378826916",
