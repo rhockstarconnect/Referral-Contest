@@ -4,56 +4,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rhockstar Referral Contest | Admin</title>
-
+  <title>Rhockstar Referral Contest Admin</title>
   <style>
-    :root {
-      --bg: #0b1120;
-      --panel: #111c30;
-      --line: #263750;
-      --text: #eaf2ff;
-      --muted: #a4b3c9;
-      --blue: #38bdf8;
-      --purple: #8b5cf6;
-    }
-
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
       padding: 20px;
-      background: linear-gradient(135deg, var(--bg), #17102d);
-      color: var(--text);
+      background: #0b1120;
+      color: #eaf2ff;
       font-family: Arial, sans-serif;
     }
 
-    main {
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    h1 { color: var(--blue); }
+    main { max-width: 1100px; margin: auto; }
 
     .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 14px;
       padding: 20px;
       margin-bottom: 20px;
+      background: #111c30;
+      border: 1px solid #263750;
+      border-radius: 14px;
     }
 
-    input, select, textarea, button {
+    h1 { color: #38bdf8; }
+
+    input, button, textarea, select {
+      display: block;
       width: 100%;
-      padding: 11px;
-      margin: 5px 0;
+      padding: 12px;
+      margin: 8px 0;
       border-radius: 7px;
-      border: 1px solid var(--line);
-      font-size: 14px;
+      border: 1px solid #263750;
+      font-size: 15px;
     }
 
-    input, select, textarea {
-      background: #0b1425;
+    input, textarea, select {
       color: white;
+      background: #0b1425;
     }
 
     button {
@@ -64,130 +51,76 @@
       cursor: pointer;
     }
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    button:disabled { opacity: .6; }
 
-    .danger { background: #b91c1c; }
-    .secondary { background: #334155; }
-
-    .muted {
-      color: var(--muted);
-      font-size: 13px;
-      overflow-wrap: anywhere;
-    }
-
-    .status {
-      margin-top: 12px;
-      overflow-wrap: anywhere;
-    }
-
-    .success { color: #4ade80; }
+    .hidden { display: none; }
     .error { color: #f87171; }
-
+    .success { color: #4ade80; }
+    .muted { color: #a4b3c9; }
     .table-wrap { overflow-x: auto; }
 
     table {
       width: 100%;
-      min-width: 900px;
+      min-width: 800px;
       border-collapse: collapse;
     }
 
     th, td {
-      text-align: left;
       padding: 10px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid #263750;
+      text-align: left;
       vertical-align: top;
     }
 
-    th { color: var(--blue); }
-
-    .click-input { min-width: 95px; }
-    .name-input { min-width: 150px; }
-
-    .hidden { display: none !important; }
-
-    .top-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .top-actions button { width: auto; }
-
-    a { color: var(--blue); }
+    th { color: #38bdf8; }
+    a { color: #38bdf8; overflow-wrap: anywhere; }
   </style>
 </head>
-
 <body>
 <main>
   <h1>Rhockstar Connect</h1>
-  <p class="muted">Referral Competition Administration</p>
+  <p class="muted">Referral Contest Administration</p>
 
-  <!-- LOGIN -->
-  <section class="panel" id="loginPanel">
-    <h2>Administrator Login</h2>
+  <section id="loginPanel" class="panel">
+    <h2>Admin Login</h2>
 
     <form id="loginForm">
-      <input
-        id="adminEmail"
-        type="email"
-        placeholder="Administrator email"
-        autocomplete="username"
-        required
-      >
+      <input id="email" type="email"
+        placeholder="Admin email" autocomplete="username" required>
 
-      <input
-        id="adminPassword"
-        type="password"
-        placeholder="Password"
-        autocomplete="current-password"
-        required
-      >
+      <input id="password" type="password"
+        placeholder="Password" autocomplete="current-password" required>
 
-      <button id="loginButton" type="submit">Sign In</button>
+      <button id="loginButton" type="submit">Log In</button>
     </form>
 
-    <p id="loginMessage" class="status" role="status"></p>
+    <p id="loginMessage" role="status"></p>
   </section>
 
-  <!-- DASHBOARD -->
   <div id="dashboard" class="hidden">
     <section class="panel">
-      <div class="top-actions">
-        <button id="refreshButton" type="button">Refresh Participants</button>
-        <button id="logoutButton" class="secondary" type="button">Sign Out</button>
-      </div>
-
-      <p id="adminIdentity" class="muted"></p>
-      <p id="dashboardMessage" class="status" role="status"></p>
+      <p id="adminEmail" class="muted"></p>
+      <button id="refreshButton" type="button">Refresh Participants</button>
+      <button id="logoutButton" type="button">Log Out</button>
+      <p id="dashboardMessage" role="status"></p>
     </section>
 
     <section class="panel">
-      <h2>Participant Management</h2>
-      <p class="muted">
-        Approve participants before their referral links become active.
-        Edit click totals here when necessary.
-      </p>
-
+      <h2>Participants</h2>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Participant</th>
+              <th>Name</th>
               <th>Email</th>
               <th>Clicks</th>
               <th>Status</th>
               <th>Referral Link</th>
-              <th>Actions</th>
+              <th>Save</th>
             </tr>
           </thead>
-
-          <tbody id="participantsBody">
-            <tr>
-              <td colspan="6">Sign in to load participants.</td>
-            </tr>
+          <tbody id="participants">
+            <tr><td colspan="6">Sign in to load participants.</td></tr>
           </tbody>
         </table>
       </div>
@@ -195,68 +128,36 @@
 
     <section class="panel">
       <h2>Prize Management</h2>
-      <p class="muted">
-        Enter one prize per line in this format:
-        <code>Prize title | Prize description</code>
-      </p>
-
-      <textarea
-        id="prizeInput"
-        rows="7"
-        placeholder="1st Prize | Cash prize&#10;2nd Prize | Premium account&#10;3rd Prize | Special gift"
-      ></textarea>
-
+      <p class="muted">One prize per line: title | description</p>
+      <textarea id="prizes" rows="7"
+        placeholder="First Prize | Cash prize&#10;Second Prize | Premium account"></textarea>
       <button id="savePrizesButton" type="button">Save Prizes</button>
-      <p id="prizeMessage" class="status" role="status"></p>
+      <p id="prizeMessage" role="status"></p>
     </section>
   </div>
 </main>
 
 <script type="module">
-  import { initializeApp } from
-    "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
   import {
-    getAuth,
+    auth,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
-  } from
-    "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-  // YOUR FIREBASE CONFIGURATION
-  const firebaseConfig = {
-    apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
-    authDomain: "rcreferral-contest.firebaseapp.com",
-    databaseURL: "https://rcreferral-contest-default-rtdb.firebaseio.com",
-    projectId: "rcreferral-contest",
-    storageBucket: "rcreferral-contest.firebasestorage.app",
-    messagingSenderId: "137378826916",
-    appId: "1:137378826916:web:45b695d41fbd3eb940f431",
-    measurementId: "G-9QCXRR9V56"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  } from "./firebase.js";
 
   const $ = id => document.getElementById(id);
+  let user = null;
+  let entries = [];
 
-  let currentUser = null;
-  let participants = [];
-
-  function showMessage(id, message, type = "") {
-    const element = $(id);
-    element.textContent = message;
-    element.className = "status " + type;
+  function message(id, text, type = "") {
+    $(id).textContent = text;
+    $(id).className = type;
   }
 
-  // All sensitive admin operations are sent to the Netlify server.
-  async function adminRequest(action, data = {}) {
-    if (!currentUser) {
-      throw new Error("Please sign in first.");
-    }
+  async function api(action, data = {}) {
+    if (!user) throw new Error("Please log in.");
 
-    const token = await currentUser.getIdToken(true);
+    const token = await user.getIdToken(true);
 
     const response = await fetch("/.netlify/functions/admin", {
       method: "POST",
@@ -270,313 +171,186 @@
     const result = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(
-        result.error || "The server could not complete this request."
-      );
+      throw new Error(result.error || "Admin request failed.");
     }
 
     return result;
   }
 
-  // LOGIN
   $("loginForm").addEventListener("submit", async event => {
     event.preventDefault();
 
-    const button = $("loginButton");
-    button.disabled = true;
-
-    showMessage("loginMessage", "Signing in…");
+    $("loginButton").disabled = true;
+    message("loginMessage", "Signing in…");
 
     try {
       await signInWithEmailAndPassword(
         auth,
-        $("adminEmail").value.trim(),
-        $("adminPassword").value
+        $("email").value.trim(),
+        $("password").value
       );
-
-      showMessage("loginMessage", "");
+      message("loginMessage", "");
     } catch (error) {
-      showMessage(
-        "loginMessage",
-        "Login failed: " + error.message,
-        "error"
-      );
+      message("loginMessage", "Login failed: " + error.message, "error");
     } finally {
-      button.disabled = false;
+      $("loginButton").disabled = false;
     }
   });
 
-  // AUTH STATE
-  onAuthStateChanged(auth, async user => {
-    currentUser = user;
+  onAuthStateChanged(auth, async currentUser => {
+    user = currentUser;
 
     $("loginPanel").classList.toggle("hidden", !!user);
     $("dashboard").classList.toggle("hidden", !user);
 
     if (!user) return;
 
-    $("adminIdentity").textContent =
-      "Signed in as " + (user.email || "Administrator");
+    $("adminEmail").textContent = "Signed in as " + user.email;
 
     try {
-      // The server verifies that this account is authorized.
-      await adminRequest("list");
+      await api("list"); // Server verifies administrator authorization.
       await loadParticipants();
       await loadPrizes();
     } catch (error) {
-      showMessage("dashboardMessage", error.message, "error");
+      message("dashboardMessage", error.message, "error");
     }
   });
 
-  // LOAD PARTICIPANTS
   async function loadParticipants() {
-    showMessage("dashboardMessage", "Loading participants…");
+    const result = await api("list");
+    entries = result.participants || [];
+    const tbody = $("participants");
+    tbody.replaceChildren();
 
-    const result = await adminRequest("list");
-    participants = result.participants || [];
-
-    renderParticipants();
-
-    showMessage(
-      "dashboardMessage",
-      "Loaded " + participants.length + " participant(s).",
-      "success"
-    );
-  }
-
-  function renderParticipants() {
-    const body = $("participantsBody");
-    body.replaceChildren();
-
-    if (!participants.length) {
-      const row = document.createElement("tr");
-      const cell = document.createElement("td");
+    if (!entries.length) {
+      const row = tbody.insertRow();
+      const cell = row.insertCell();
       cell.colSpan = 6;
       cell.textContent = "No participants registered yet.";
-      row.appendChild(cell);
-      body.appendChild(row);
       return;
     }
 
-    participants.forEach(participant => {
-      const row = document.createElement("tr");
+    for (const p of entries) {
+      const row = tbody.insertRow();
 
-      // Name
-      const nameCell = document.createElement("td");
-      const nameInput = document.createElement("input");
-      nameInput.className = "name-input";
-      nameInput.maxLength = 80;
-      nameInput.value = participant.name || "";
-      nameCell.appendChild(nameInput);
-      row.appendChild(nameCell);
+      const nameCell = row.insertCell();
+      const name = document.createElement("input");
+      name.value = p.name || "";
+      name.maxLength = 80;
+      nameCell.appendChild(name);
 
-      // Email
-      const emailCell = document.createElement("td");
-      emailCell.textContent = participant.email || "";
-      row.appendChild(emailCell);
+      row.insertCell().textContent = p.email || "";
 
-      // Click count
-      const clicksCell = document.createElement("td");
-      const clicksInput = document.createElement("input");
-      clicksInput.className = "click-input";
-      clicksInput.type = "number";
-      clicksInput.min = "0";
-      clicksInput.max = "1000000000";
-      clicksInput.step = "1";
-      clicksInput.value = Number(participant.clicks || 0);
-      clicksCell.appendChild(clicksInput);
-      row.appendChild(clicksCell);
+      const clickCell = row.insertCell();
+      const clicks = document.createElement("input");
+      clicks.type = "number";
+      clicks.min = "0";
+      clicks.step = "1";
+      clicks.value = p.clicks || 0;
+      clickCell.appendChild(clicks);
 
-      // Status
-      const statusCell = document.createElement("td");
-      const statusSelect = document.createElement("select");
+      const statusCell = row.insertCell();
+      const status = document.createElement("select");
 
-      ["pending", "approved", "rejected"].forEach(status => {
+      ["pending", "approved", "rejected"].forEach(value => {
         const option = document.createElement("option");
-        option.value = status;
-        option.textContent = status;
-        option.selected = status === participant.status;
-        statusSelect.appendChild(option);
+        option.value = value;
+        option.textContent = value;
+        option.selected = value === p.status;
+        status.appendChild(option);
       });
 
-      statusCell.appendChild(statusSelect);
-      row.appendChild(statusCell);
+      statusCell.appendChild(status);
 
-      // Referral URL
-      const linkCell = document.createElement("td");
-      const link = document.createElement("a");
-
-      const referralUrl = location.origin +
-        "/ref/" + (participant.referralCode || "");
-
-      link.href = referralUrl;
-      link.textContent = participant.referralCode
-        ? referralUrl
-        : "No referral code";
-
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-
-      linkCell.appendChild(link);
-
-      if (participant.status !== "approved") {
-        const note = document.createElement("p");
-        note.className = "muted";
-        note.textContent = "Link is inactive until approved.";
-        linkCell.appendChild(note);
+      const linkCell = row.insertCell();
+      if (p.referralCode) {
+        const link = document.createElement("a");
+        link.href = location.origin + "/ref/" + p.referralCode;
+        link.textContent = link.href;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        linkCell.appendChild(link);
+      } else {
+        linkCell.textContent = "No referral code";
       }
 
-      row.appendChild(linkCell);
+      const saveCell = row.insertCell();
+      const save = document.createElement("button");
+      save.textContent = "Save";
 
-      // Actions
-      const actionsCell = document.createElement("td");
+      save.addEventListener("click", async () => {
+        const total = Number(clicks.value);
 
-      const saveButton = document.createElement("button");
-      saveButton.textContent = "Save Changes";
-
-      saveButton.addEventListener("click", async () => {
-        const clicks = Number(clicksInput.value);
-
-        if (
-          !Number.isSafeInteger(clicks) ||
-          clicks < 0 ||
-          clicks > 1000000000
-        ) {
-          alert("Enter a valid non-negative whole number for clicks.");
+        if (!Number.isSafeInteger(total) || total < 0) {
+          alert("Enter a valid non-negative whole number.");
           return;
         }
 
-        if (!nameInput.value.trim()) {
-          alert("Participant name cannot be empty.");
-          return;
-        }
-
-        saveButton.disabled = true;
+        save.disabled = true;
 
         try {
-          await adminRequest("saveParticipant", {
-            id: participant.id,
-            name: nameInput.value.trim(),
-            clicks,
-            status: statusSelect.value,
-            destination: participant.destination
+          await api("saveParticipant", {
+            id: p.id,
+            name: name.value.trim(),
+            clicks: total,
+            status: status.value,
+            destination: p.destination
           });
 
-          showMessage(
-            "dashboardMessage",
-            "Participant updated successfully.",
-            "success"
-          );
-
+          message("dashboardMessage", "Participant updated.", "success");
           await loadParticipants();
         } catch (error) {
-          showMessage("dashboardMessage", error.message, "error");
+          message("dashboardMessage", error.message, "error");
         } finally {
-          saveButton.disabled = false;
+          save.disabled = false;
         }
       });
 
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete Participant";
-      deleteButton.className = "danger";
-
-      deleteButton.addEventListener("click", async () => {
-        if (!confirm(
-          "Permanently delete " +
-          (participant.name || "this participant") +
-          "?"
-        )) return;
-
-        deleteButton.disabled = true;
-
-        try {
-          await adminRequest("deleteParticipant", {
-            id: participant.id
-          });
-
-          showMessage(
-            "dashboardMessage",
-            "Participant deleted.",
-            "success"
-          );
-
-          await loadParticipants();
-        } catch (error) {
-          showMessage("dashboardMessage", error.message, "error");
-        } finally {
-          deleteButton.disabled = false;
-        }
-      });
-
-      actionsCell.append(saveButton, deleteButton);
-      row.appendChild(actionsCell);
-
-      body.appendChild(row);
-    });
+      saveCell.appendChild(save);
+    }
   }
 
-  // PRIZES
   async function loadPrizes() {
-    const result = await adminRequest("getPrizes");
-    const prizes = result.prizes || [];
-
-    $("prizeInput").value = prizes
-      .map(prize =>
-        (prize.title || "") + " | " + (prize.description || "")
-      )
+    const result = await api("getPrizes");
+    $("prizes").value = (result.prizes || [])
+      .map(p => p.title + " | " + (p.description || ""))
       .join("\n");
   }
 
   $("savePrizesButton").addEventListener("click", async () => {
-    const button = $("savePrizesButton");
-    button.disabled = true;
-
     try {
-      const prizes = $("prizeInput").value
+      const prizes = $("prizes").value
         .split("\n")
         .map(line => line.trim())
         .filter(Boolean)
         .map(line => {
-          const separator = line.indexOf("|");
-
-          if (separator === -1) {
-            return {
-              title: line,
-              description: ""
-            };
-          }
-
-          return {
-            title: line.slice(0, separator).trim(),
-            description: line.slice(separator + 1).trim()
-          };
+          const i = line.indexOf("|");
+          return i < 0
+            ? { title: line, description: "" }
+            : {
+                title: line.slice(0, i).trim(),
+                description: line.slice(i + 1).trim()
+              };
         });
 
-      await adminRequest("savePrizes", { prizes });
-
-      showMessage("prizeMessage", "Prizes saved successfully.", "success");
+      await api("savePrizes", { prizes });
+      message("prizeMessage", "Prizes saved successfully.", "success");
     } catch (error) {
-      showMessage("prizeMessage", error.message, "error");
-    } finally {
-      button.disabled = false;
+      message("prizeMessage", error.message, "error");
     }
   });
 
-  // REFRESH AND LOGOUT
   $("refreshButton").addEventListener("click", async () => {
     try {
       await loadParticipants();
+      message("dashboardMessage", "Participants refreshed.", "success");
     } catch (error) {
-      showMessage("dashboardMessage", error.message, "error");
+      message("dashboardMessage", error.message, "error");
     }
   });
 
   $("logoutButton").addEventListener("click", async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      showMessage("dashboardMessage", error.message, "error");
-    }
+    await signOut(auth);
   });
 </script>
 </body>
