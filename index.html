@@ -1,176 +1,472 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rhockstar Connect Referral Competition</title>
-<style>
-:root{--bg:#0b1120;--panel:#111c30;--line:#263750;--text:#eaf2ff;--muted:#a4b3c9;--blue:#38bdf8;--purple:#8b5cf6}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(135deg,#0b1120,#11102b);color:var(--text);font:16px Arial,sans-serif}
-main{width:min(1000px,92%);margin:30px auto}
-header,.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px}
-h1{font-size:clamp(25px,5vw,40px);margin:0 0 10px}
-h2{margin-top:0}
-p{color:var(--muted);line-height:1.6}
-input,button{width:100%;padding:13px;border-radius:9px;border:1px solid var(--line);margin:7px 0;font-size:15px}
-input{background:#0b1425;color:white}
-button{background:linear-gradient(90deg,#0284c7,#7c3aed);color:white;font-weight:bold;border:0;cursor:pointer}
-button:disabled{opacity:.5}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-table{width:100%;border-collapse:collapse}
-td,th{text-align:left;padding:12px;border-bottom:1px solid var(--line)}
-.small{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
-#message{overflow-wrap:anywhere;color:#7dd3fc}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1120">
+
+  <title>Rhockstar Referral Contest</title>
+
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #111c30;
+      --line: #263650;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --blue: #38bdf8;
+      --purple: #8b5cf6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 24px 16px;
+      text-align: center;
+      background: linear-gradient(135deg, #111c30, #312e81);
+      border-bottom: 1px solid var(--line);
+    }
+
+    header h1 {
+      margin: 0;
+      color: var(--blue);
+      font-size: clamp(24px, 5vw, 36px);
+    }
+
+    header p {
+      color: #e2e8f0;
+      margin-bottom: 0;
+    }
+
+    main {
+      max-width: 950px;
+      margin: auto;
+      padding: 20px 14px 50px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 18px 0;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 21px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      color: #cbd5e1;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 13px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input {
+      border: 1px solid #475569;
+      background: #0b1120;
+      color: white;
+    }
+
+    button {
+      border: 0;
+      background: linear-gradient(90deg, #0284c7, #7c3aed);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 14px;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .message {
+      overflow-wrap: anywhere;
+      margin-top: 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 440px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--blue);
+    }
+
+    .prize {
+      border: 1px solid var(--line);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      overflow-wrap: anywhere;
+    }
+
+    a {
+      color: var(--blue);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+    }
+  </style>
 </head>
+
 <body>
-<main>
-<header>
-<h1>Rhockstar Connect</h1>
-<h2>Referral Competition</h2>
-<p>Share Rhockstar Connect, bring more people to the platform, and compete for prizes. Register below and await approval before sharing your referral link.</p>
-</header>
+  <header>
+    <h1>Rhockstar Referral Contest</h1>
+    <p>Invite people, grow the community and compete for prizes!</p>
+  </header>
 
-<div class="grid">
-<section class="panel">
-<h2>Join the competition</h2>
-<form id="registration">
-<input id="name" placeholder="Full name" maxlength="80" required>
-<input id="email" type="email" placeholder="Email address" required>
-<input id="destination" type="url" value="https://rhockstarconnect.com/" required>
-<button id="registerButton">Register</button>
-</form>
-<p id="message" role="status"></p>
-<p class="small">Use your real details. Each email can register once. Entries must be approved by the competition administrator.</p>
-</section>
+  <main>
+    <section class="panel">
+      <h2>Join the Competition</h2>
+      <p class="muted">
+        Register your details. If your registration requires approval,
+        your participation will begin after the administrator approves it.
+      </p>
 
-<section class="panel">
-<h2>Competition prizes</h2>
-<div id="prizes">Loading prizes…</div>
-</section>
-</div>
+      <form id="registrationForm">
+        <label for="fullName">Full name</label>
+        <input id="fullName" name="fullName"
+          autocomplete="name" required maxlength="100">
 
-<section class="panel">
-<h2>Live leaderboard</h2>
-<p class="small">Only approved participants appear here. Click counts may take a short time to update.</p>
-<div style="overflow-x:auto">
-<table>
-<thead><tr><th>Rank</th><th>Participant</th><th>Clicks</th></tr></thead>
-<tbody id="leaderboard"><tr><td colspan="3">Loading leaderboard…</td></tr></tbody>
-</table>
-</div>
-</section>
-</main>
+        <label for="email">Email address</label>
+        <input id="email" name="email"
+          type="email" autocomplete="email" required maxlength="254">
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getFirestore, collection, doc, getDoc, getDocs, query, orderBy, limit }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+        <label for="phone">Phone number</label>
+        <input id="phone" name="phone"
+          type="tel" autocomplete="tel" required maxlength="30">
 
-const app = initializeApp({
-   apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
-  authDomain: "rhockstar-connect.firebaseapp.com",
-  projectId: "rhockstar-connect",
-appId: "1:137378826916:web:45b695d41fbd3eb940f431"
-});
+        <label for="username">Preferred username</label>
+        <input id="username" name="username"
+          required minlength="3" maxlength="30"
+          pattern="[A-Za-z0-9_]+"
+          title="Use letters, numbers and underscores only">
 
-const db = getFirestore(app);
-const message = document.getElementById("message");
+        <button id="registerButton" type="submit">
+          Submit Registration
+        </button>
+      </form>
 
-document.getElementById("registration").addEventListener("submit", async event => {
-  event.preventDefault();
+      <p id="registrationMessage" class="message" role="status"></p>
+    </section>
 
-  const button = document.getElementById("registerButton");
-  button.disabled = true;
-  message.textContent = "Submitting registration…";
+    <section class="panel" id="referralPanel" hidden>
+      <h2>Your Referral Link</h2>
+      <p id="approvalMessage" class="muted"></p>
+      <input id="referralLink" readonly aria-label="Your referral link">
+      <button id="copyLinkButton" type="button">Copy Referral Link</button>
+      <p id="copyMessage" class="message" role="status"></p>
+      <p class="muted">
+        Referral visits are counted by the server according to the contest
+        rules. Repeated visits from the same browser may not count again.
+      </p>
+    </section>
 
-  try {
-    const response = await fetch("/.netlify/functions/register", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        destination: document.getElementById("destination").value
-      })
-    });
+    <section class="panel">
+      <h2>Prizes</h2>
+      <div id="prizes">
+        <p class="muted">Loading prizes...</p>
+      </div>
+    </section>
 
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Registration failed.");
+    <section class="panel">
+      <h2>Live Leaderboard</h2>
+      <p class="muted">
+        Rankings show approved participants and the click totals published
+        by the contest backend.
+      </p>
 
-    message.textContent =
-      result.message + " Your referral code is " + result.referralCode +
-      ". You will receive your tracking link after approval.";
-    event.target.reset();
-    document.getElementById("destination").value = "https://rhockstarconnect.com/";
-  } catch (error) {
-    message.textContent = error.message;
-  } finally {
-    button.disabled = false;
-  }
-});
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Participant</th>
+              <th>Referral Clicks</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard">
+            <tr>
+              <td colspan="3">Loading leaderboard...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-async function loadLeaderboard() {
-  const body = document.getElementById("leaderboard");
-  try {
-    const snap = await getDocs(query(
-      collection(db, "leaderboard"),
-      orderBy("clicks", "desc"),
-      limit(100)
-    ));
+      <p id="leaderboardMessage" class="message" role="status"></p>
+    </section>
+  </main>
 
-    body.innerHTML = "";
-    if (snap.empty) {
-      body.innerHTML = '<tr><td colspan="3">No approved participants yet.</td></tr>';
-      return;
+  <footer>
+    Rhockstar Connect Referral Contest
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      query,
+      orderBy,
+      limit,
+      onSnapshot,
+      doc
+    } from
+      "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+    // IMPORTANT:
+    // Replace apiKey below with the CURRENT key shown in:
+    // Firebase Console > Project settings > General > Your apps.
+    const firebaseConfig = {
+      apiKey: "REPLACE_WITH_YOUR_CURRENT_FIREBASE_WEB_API_KEY",
+      authDomain: "rcreferral-contest.firebaseapp.com",
+      databaseURL:
+        "https://rcreferral-contest-default-rtdb.firebaseio.com",
+      projectId: "rcreferral-contest",
+      storageBucket: "rcreferral-contest.firebasestorage.app",
+      messagingSenderId: "137378826916",
+      appId: "1:137378826916:web:45b695d41fbd3eb940f431",
+      measurementId: "G-9QCXRR9V56"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const $ = (id) => document.getElementById(id);
+
+    // Render user-supplied text safely.
+    function addTextCell(row, value) {
+      const cell = document.createElement("td");
+      cell.textContent = value == null ? "" : String(value);
+      row.appendChild(cell);
     }
 
-    let rank = 0;
-    snap.forEach(item => {
-      rank++;
-      const row = document.createElement("tr");
-      for (const value of [rank, item.data().name || "Participant", item.data().clicks || 0]) {
-        const cell = document.createElement("td");
-        cell.textContent = value;
-        row.appendChild(cell);
+    function showMessage(id, message) {
+      $(id).textContent = message;
+    }
+
+    // Register through the protected Netlify Function.
+    $("registrationForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const button = $("registerButton");
+      button.disabled = true;
+      showMessage("registrationMessage", "Submitting registration...");
+
+      const payload = {
+        fullName: $("fullName").value.trim(),
+        email: $("email").value.trim(),
+        phone: $("phone").value.trim(),
+        username: $("username").value.trim()
+      };
+
+      try {
+        const response = await fetch(
+          "/.netlify/functions/register",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          }
+        );
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || result.message ||
+            "Registration failed. Please try again."
+          );
+        }
+
+        showMessage(
+          "registrationMessage",
+          result.message ||
+          "Registration submitted. Check back for approval."
+        );
+
+        // Only show a link if the backend actually returns a referral code.
+        if (result.referralCode) {
+          const url = new URL("/", window.location.origin);
+          url.searchParams.set("ref", result.referralCode);
+          $("referralLink").value = url.toString();
+          $("referralPanel").hidden = false;
+          $("approvalMessage").textContent =
+            result.approved === true
+              ? "Your registration is approved."
+              : "Your registration is awaiting approval.";
+        }
+
+        $("registrationForm").reset();
+      } catch (error) {
+        console.error("Registration error:", error);
+        showMessage("registrationMessage", error.message);
+      } finally {
+        button.disabled = false;
       }
-      body.appendChild(row);
     });
-  } catch (error) {
-    body.innerHTML = '<tr><td colspan="3">Leaderboard unavailable. Check Firebase configuration and rules.</td></tr>';
-  }
-}
 
-async function loadPrizes() {
-  const box = document.getElementById("prizes");
-  try {
-    const snap = await getDoc(doc(db, "settings", "prizes"));
-    const prizes = snap.exists() ? snap.data().items || [] : [];
+    // Copy the referral link.
+    $("copyLinkButton").addEventListener("click", async () => {
+      const link = $("referralLink").value;
 
-    if (!prizes.length) {
-      box.textContent = "Prize details will be announced soon.";
-      return;
+      try {
+        await navigator.clipboard.writeText(link);
+        showMessage("copyMessage", "Referral link copied.");
+      } catch {
+        $("referralLink").select();
+        showMessage(
+          "copyMessage",
+          "Select the link and copy it manually."
+        );
+      }
+    });
+
+    // Load public prizes.
+    try {
+      onSnapshot(
+        doc(db, "settings", "prizes"),
+        (snapshot) => {
+          const container = $("prizes");
+          container.replaceChildren();
+
+          if (!snapshot.exists()) {
+            container.textContent = "Prizes have not been announced yet.";
+            return;
+          }
+
+          const data = snapshot.data();
+          const prizes = Array.isArray(data.items)
+            ? data.items
+            : [];
+
+          if (prizes.length === 0) {
+            container.textContent = "Prizes have not been announced yet.";
+            return;
+          }
+
+          prizes.forEach((prize) => {
+            const item = document.createElement("div");
+            item.className = "prize";
+
+            const title = document.createElement("strong");
+            title.textContent = prize.name || "Contest prize";
+
+            const description = document.createElement("p");
+            description.textContent = prize.description || "";
+
+            item.append(title, description);
+            container.appendChild(item);
+          });
+        },
+        (error) => {
+          console.error("Prize loading error:", error);
+          $("prizes").textContent =
+            "Unable to load prizes. Please try again later.";
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      $("prizes").textContent = "Unable to load prizes.";
     }
 
-    box.replaceChildren();
-    prizes.forEach(prize => {
-      const item = document.createElement("div");
-      const title = document.createElement("h3");
-      title.textContent = prize.title;
-      const description = document.createElement("p");
-      description.textContent = prize.description || "";
-      item.append(title, description);
-      box.appendChild(item);
-    });
-  } catch {
-    box.textContent = "Prize details will be announced soon.";
-  }
-}
+    // Listen to the public leaderboard.
+    try {
+      const leaderboardQuery = query(
+        collection(db, "leaderboard"),
+        orderBy("clicks", "desc"),
+        limit(50)
+      );
 
-loadLeaderboard();
-loadPrizes();
-</script>
+      onSnapshot(
+        leaderboardQuery,
+        (snapshot) => {
+          const body = $("leaderboard");
+          body.replaceChildren();
+
+          if (snapshot.empty) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.colSpan = 3;
+            cell.textContent = "No approved participants yet.";
+            row.appendChild(cell);
+            body.appendChild(row);
+            return;
+          }
+
+          let rank = 1;
+
+          snapshot.forEach((record) => {
+            const data = record.data();
+            const row = document.createElement("tr");
+
+            addTextCell(row, rank++);
+            addTextCell(
+              row,
+              data.displayName || data.username || "Participant"
+            );
+            addTextCell(row, Number(data.clicks || 0));
+
+            body.appendChild(row);
+          });
+
+          showMessage("leaderboardMessage", "");
+        },
+        (error) => {
+          console.error("Leaderboard error:", error);
+          showMessage(
+            "leaderboardMessage",
+            "Unable to load the leaderboard. Check Firebase configuration and Firestore rules."
+          );
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      showMessage("leaderboardMessage", "Unable to load leaderboard.");
+    }
+  </script>
 </body>
 </html>
