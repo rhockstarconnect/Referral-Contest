@@ -1,233 +1,583 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rhockstar Referral Admin</title>
-<style>
-body{margin:0;background:#0b1120;color:#eaf2ff;font:15px Arial;padding:20px}
-main{max-width:1100px;margin:auto}
-section{background:#111c30;border:1px solid #263750;border-radius:14px;padding:18px;margin-bottom:18px}
-input,select,button,textarea{box-sizing:border-box;width:100%;padding:10px;margin:5px 0;border-radius:7px;border:1px solid #34435d;background:#0b1425;color:white}
-button{background:#2563eb;border:0;cursor:pointer;font-weight:bold}
-.danger{background:#b91c1c}
-table{width:100%;border-collapse:collapse}
-td,th{text-align:left;padding:8px;border-bottom:1px solid #34435d;vertical-align:top}
-.wrap{overflow-x:auto}
-small{color:#a4b3c9;overflow-wrap:anywhere}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rhockstar Referral Contest | Admin</title>
+
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #111c30;
+      --line: #263750;
+      --text: #eaf2ff;
+      --muted: #a4b3c9;
+      --blue: #38bdf8;
+      --purple: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--bg), #17102d);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h1 { color: var(--blue); }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 11px;
+      margin: 5px 0;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      background: #0b1425;
+      color: white;
+    }
+
+    button {
+      background: linear-gradient(90deg, #0284c7, #7c3aed);
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .danger { background: #b91c1c; }
+    .secondary { background: #334155; }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th { color: var(--blue); }
+
+    .click-input { min-width: 95px; }
+    .name-input { min-width: 150px; }
+
+    .hidden { display: none !important; }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .top-actions button { width: auto; }
+
+    a { color: var(--blue); }
+  </style>
 </head>
+
 <body>
 <main>
-<h1>Rhockstar Connect Admin</h1>
+  <h1>Rhockstar Connect</h1>
+  <p class="muted">Referral Competition Administration</p>
 
-<section id="loginPanel">
-<h2>Administrator login</h2>
-<form id="loginForm">
-<input id="email" type="email" placeholder="Admin email" required>
-<input id="password" type="password" placeholder="Password" required>
-<button>Sign in</button>
-</form>
-<p id="status"></p>
-</section>
+  <!-- LOGIN -->
+  <section class="panel" id="loginPanel">
+    <h2>Administrator Login</h2>
 
-<div id="dashboard" hidden>
-<section>
-<button id="logout">Sign out</button>
-<h2>Participants</h2>
-<button id="reload">Refresh participants</button>
-<div class="wrap">
-<table>
-<thead><tr><th>Participant</th><th>Clicks</th><th>Status</th><th>Referral link</th><th>Save</th></tr></thead>
-<tbody id="participants"></tbody>
-</table>
-</div>
-</section>
+    <form id="loginForm">
+      <input
+        id="adminEmail"
+        type="email"
+        placeholder="Administrator email"
+        autocomplete="username"
+        required
+      >
 
-<section>
-<h2>Manage prizes</h2>
-<p>Enter one prize per line, using this format: title | description</p>
-<textarea id="prizes" rows="6" placeholder="1st Prize | Cash prize&#10;2nd Prize | Premium account"></textarea>
-<button id="savePrizes">Save prizes</button>
-</section>
-</div>
+      <input
+        id="adminPassword"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button id="loginButton" type="submit">Sign In</button>
+    </form>
+
+    <p id="loginMessage" class="status" role="status"></p>
+  </section>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden">
+    <section class="panel">
+      <div class="top-actions">
+        <button id="refreshButton" type="button">Refresh Participants</button>
+        <button id="logoutButton" class="secondary" type="button">Sign Out</button>
+      </div>
+
+      <p id="adminIdentity" class="muted"></p>
+      <p id="dashboardMessage" class="status" role="status"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Participant Management</h2>
+      <p class="muted">
+        Approve participants before their referral links become active.
+        Edit click totals here when necessary.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Participant</th>
+              <th>Email</th>
+              <th>Clicks</th>
+              <th>Status</th>
+              <th>Referral Link</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="participantsBody">
+            <tr>
+              <td colspan="6">Sign in to load participants.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Prize Management</h2>
+      <p class="muted">
+        Enter one prize per line in this format:
+        <code>Prize title | Prize description</code>
+      </p>
+
+      <textarea
+        id="prizeInput"
+        rows="7"
+        placeholder="1st Prize | Cash prize&#10;2nd Prize | Premium account&#10;3rd Prize | Special gift"
+      ></textarea>
+
+      <button id="savePrizesButton" type="button">Save Prizes</button>
+      <p id="prizeMessage" class="status" role="status"></p>
+    </section>
+  </div>
 </main>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {
-  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-const app = initializeApp({
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "rhockstar-connect.firebaseapp.com",
-  projectId: "rhockstar-connect",
-  appId: "YOUR_FIREBASE_APP_ID"
-});
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+  } from
+    "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-const auth = getAuth(app);
-const $ = id => document.getElementById(id);
-let participants = [];
+  // YOUR FIREBASE CONFIGURATION
+  const firebaseConfig = {
+    apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
+    authDomain: "rcreferral-contest.firebaseapp.com",
+    databaseURL: "https://rcreferral-contest-default-rtdb.firebaseio.com",
+    projectId: "rcreferral-contest",
+    storageBucket: "rcreferral-contest.firebasestorage.app",
+    messagingSenderId: "137378826916",
+    appId: "1:137378826916:web:45b695d41fbd3eb940f431",
+    measurementId: "G-9QCXRR9V56"
+  };
 
-async function callAdmin(action, data = {}) {
-  const user = auth.currentUser;
-  if (!user) throw new Error("Please sign in.");
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-  const token = await user.getIdToken(true);
-  const response = await fetch("/.netlify/functions/admin", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + token
-    },
-    body: JSON.stringify({action, ...data})
+  const $ = id => document.getElementById(id);
+
+  let currentUser = null;
+  let participants = [];
+
+  function showMessage(id, message, type = "") {
+    const element = $(id);
+    element.textContent = message;
+    element.className = "status " + type;
+  }
+
+  // All sensitive admin operations are sent to the Netlify server.
+  async function adminRequest(action, data = {}) {
+    if (!currentUser) {
+      throw new Error("Please sign in first.");
+    }
+
+    const token = await currentUser.getIdToken(true);
+
+    const response = await fetch("/.netlify/functions/admin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ action, ...data })
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        result.error || "The server could not complete this request."
+      );
+    }
+
+    return result;
+  }
+
+  // LOGIN
+  $("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = $("loginButton");
+    button.disabled = true;
+
+    showMessage("loginMessage", "Signing in…");
+
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        $("adminEmail").value.trim(),
+        $("adminPassword").value
+      );
+
+      showMessage("loginMessage", "");
+    } catch (error) {
+      showMessage(
+        "loginMessage",
+        "Login failed: " + error.message,
+        "error"
+      );
+    } finally {
+      button.disabled = false;
+    }
   });
 
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Request failed.");
-  return result;
-}
+  // AUTH STATE
+  onAuthStateChanged(auth, async user => {
+    currentUser = user;
 
-$("loginForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  $("status").textContent = "Signing in…";
+    $("loginPanel").classList.toggle("hidden", !!user);
+    $("dashboard").classList.toggle("hidden", !user);
 
-  try {
-    await signInWithEmailAndPassword(auth, $("email").value, $("password").value);
-    $("status").textContent = "";
-  } catch (error) {
-    $("status").textContent = "Login failed: " + error.message;
-  }
-});
+    if (!user) return;
 
-onAuthStateChanged(auth, async user => {
-  $("loginPanel").hidden = !!user;
-  $("dashboard").hidden = !user;
+    $("adminIdentity").textContent =
+      "Signed in as " + (user.email || "Administrator");
 
-  if (user) {
     try {
+      // The server verifies that this account is authorized.
+      await adminRequest("list");
       await loadParticipants();
       await loadPrizes();
     } catch (error) {
-      $("status").textContent = error.message;
+      showMessage("dashboardMessage", error.message, "error");
     }
-  }
-});
-
-$("logout").onclick = () => signOut(auth);
-$("reload").onclick = () => loadParticipants();
-
-async function loadParticipants() {
-  const result = await callAdmin("list");
-  participants = result.participants;
-  const body = $("participants");
-  body.replaceChildren();
-
-  participants.forEach(p => {
-    const row = document.createElement("tr");
-
-    function cell() {
-      const td = document.createElement("td");
-      row.appendChild(td);
-      return td;
-    }
-
-    const nameCell = cell();
-    const name = document.createElement("input");
-    name.value = p.name || "";
-    name.maxLength = 80;
-    nameCell.appendChild(name);
-
-    const clickCell = cell();
-    const clicks = document.createElement("input");
-    clicks.type = "number";
-    clicks.min = "0";
-    clicks.max = "1000000000";
-    clicks.step = "1";
-    clicks.value = p.clicks || 0;
-    clickCell.appendChild(clicks);
-
-    const statusCell = cell();
-    const status = document.createElement("select");
-    ["pending", "approved", "rejected"].forEach(value => {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = value;
-      option.selected = value === p.status;
-      status.appendChild(option);
-    });
-    statusCell.appendChild(status);
-
-    const linkCell = cell();
-    const link = document.createElement("small");
-    link.textContent = location.origin + "/ref/" + p.referralCode;
-    linkCell.appendChild(link);
-
-    const actionCell = cell();
-    const save = document.createElement("button");
-    save.textContent = "Save";
-    save.onclick = async () => {
-      try {
-        await callAdmin("saveParticipant", {
-          id: p.id,
-          name: name.value,
-          clicks: Number(clicks.value),
-          status: status.value,
-          destination: p.destination
-        });
-        alert("Participant saved.");
-        await loadParticipants();
-      } catch (error) {
-        alert(error.message);
-      }
-    };
-
-    const remove = document.createElement("button");
-    remove.textContent = "Delete";
-    remove.className = "danger";
-    remove.onclick = async () => {
-      if (!confirm("Delete this participant?")) return;
-      try {
-        await callAdmin("deleteParticipant", {id: p.id});
-        await loadParticipants();
-      } catch (error) {
-        alert(error.message);
-      }
-    };
-
-    actionCell.append(save, remove);
-    body.appendChild(row);
   });
-}
 
-async function loadPrizes() {
-  const result = await callAdmin("getPrizes");
-  $("prizes").value = (result.prizes || [])
-    .map(p => p.title + " | " + (p.description || ""))
-    .join("\n");
-}
+  // LOAD PARTICIPANTS
+  async function loadParticipants() {
+    showMessage("dashboardMessage", "Loading participants…");
 
-$("savePrizes").onclick = async () => {
-  try {
-    const prizes = $("prizes").value.split("\n")
-      .map(line => line.trim())
-      .filter(Boolean)
-      .map(line => {
-        const parts = line.split("|");
-        return {
-          title: (parts.shift() || "").trim(),
-          description: parts.join("|").trim()
-        };
+    const result = await adminRequest("list");
+    participants = result.participants || [];
+
+    renderParticipants();
+
+    showMessage(
+      "dashboardMessage",
+      "Loaded " + participants.length + " participant(s).",
+      "success"
+    );
+  }
+
+  function renderParticipants() {
+    const body = $("participantsBody");
+    body.replaceChildren();
+
+    if (!participants.length) {
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 6;
+      cell.textContent = "No participants registered yet.";
+      row.appendChild(cell);
+      body.appendChild(row);
+      return;
+    }
+
+    participants.forEach(participant => {
+      const row = document.createElement("tr");
+
+      // Name
+      const nameCell = document.createElement("td");
+      const nameInput = document.createElement("input");
+      nameInput.className = "name-input";
+      nameInput.maxLength = 80;
+      nameInput.value = participant.name || "";
+      nameCell.appendChild(nameInput);
+      row.appendChild(nameCell);
+
+      // Email
+      const emailCell = document.createElement("td");
+      emailCell.textContent = participant.email || "";
+      row.appendChild(emailCell);
+
+      // Click count
+      const clicksCell = document.createElement("td");
+      const clicksInput = document.createElement("input");
+      clicksInput.className = "click-input";
+      clicksInput.type = "number";
+      clicksInput.min = "0";
+      clicksInput.max = "1000000000";
+      clicksInput.step = "1";
+      clicksInput.value = Number(participant.clicks || 0);
+      clicksCell.appendChild(clicksInput);
+      row.appendChild(clicksCell);
+
+      // Status
+      const statusCell = document.createElement("td");
+      const statusSelect = document.createElement("select");
+
+      ["pending", "approved", "rejected"].forEach(status => {
+        const option = document.createElement("option");
+        option.value = status;
+        option.textContent = status;
+        option.selected = status === participant.status;
+        statusSelect.appendChild(option);
       });
 
-    await callAdmin("savePrizes", {prizes});
-    alert("Prizes saved.");
-  } catch (error) {
-    alert(error.message);
+      statusCell.appendChild(statusSelect);
+      row.appendChild(statusCell);
+
+      // Referral URL
+      const linkCell = document.createElement("td");
+      const link = document.createElement("a");
+
+      const referralUrl = location.origin +
+        "/ref/" + (participant.referralCode || "");
+
+      link.href = referralUrl;
+      link.textContent = participant.referralCode
+        ? referralUrl
+        : "No referral code";
+
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+      linkCell.appendChild(link);
+
+      if (participant.status !== "approved") {
+        const note = document.createElement("p");
+        note.className = "muted";
+        note.textContent = "Link is inactive until approved.";
+        linkCell.appendChild(note);
+      }
+
+      row.appendChild(linkCell);
+
+      // Actions
+      const actionsCell = document.createElement("td");
+
+      const saveButton = document.createElement("button");
+      saveButton.textContent = "Save Changes";
+
+      saveButton.addEventListener("click", async () => {
+        const clicks = Number(clicksInput.value);
+
+        if (
+          !Number.isSafeInteger(clicks) ||
+          clicks < 0 ||
+          clicks > 1000000000
+        ) {
+          alert("Enter a valid non-negative whole number for clicks.");
+          return;
+        }
+
+        if (!nameInput.value.trim()) {
+          alert("Participant name cannot be empty.");
+          return;
+        }
+
+        saveButton.disabled = true;
+
+        try {
+          await adminRequest("saveParticipant", {
+            id: participant.id,
+            name: nameInput.value.trim(),
+            clicks,
+            status: statusSelect.value,
+            destination: participant.destination
+          });
+
+          showMessage(
+            "dashboardMessage",
+            "Participant updated successfully.",
+            "success"
+          );
+
+          await loadParticipants();
+        } catch (error) {
+          showMessage("dashboardMessage", error.message, "error");
+        } finally {
+          saveButton.disabled = false;
+        }
+      });
+
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "Delete Participant";
+      deleteButton.className = "danger";
+
+      deleteButton.addEventListener("click", async () => {
+        if (!confirm(
+          "Permanently delete " +
+          (participant.name || "this participant") +
+          "?"
+        )) return;
+
+        deleteButton.disabled = true;
+
+        try {
+          await adminRequest("deleteParticipant", {
+            id: participant.id
+          });
+
+          showMessage(
+            "dashboardMessage",
+            "Participant deleted.",
+            "success"
+          );
+
+          await loadParticipants();
+        } catch (error) {
+          showMessage("dashboardMessage", error.message, "error");
+        } finally {
+          deleteButton.disabled = false;
+        }
+      });
+
+      actionsCell.append(saveButton, deleteButton);
+      row.appendChild(actionsCell);
+
+      body.appendChild(row);
+    });
   }
-};
+
+  // PRIZES
+  async function loadPrizes() {
+    const result = await adminRequest("getPrizes");
+    const prizes = result.prizes || [];
+
+    $("prizeInput").value = prizes
+      .map(prize =>
+        (prize.title || "") + " | " + (prize.description || "")
+      )
+      .join("\n");
+  }
+
+  $("savePrizesButton").addEventListener("click", async () => {
+    const button = $("savePrizesButton");
+    button.disabled = true;
+
+    try {
+      const prizes = $("prizeInput").value
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map(line => {
+          const separator = line.indexOf("|");
+
+          if (separator === -1) {
+            return {
+              title: line,
+              description: ""
+            };
+          }
+
+          return {
+            title: line.slice(0, separator).trim(),
+            description: line.slice(separator + 1).trim()
+          };
+        });
+
+      await adminRequest("savePrizes", { prizes });
+
+      showMessage("prizeMessage", "Prizes saved successfully.", "success");
+    } catch (error) {
+      showMessage("prizeMessage", error.message, "error");
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  // REFRESH AND LOGOUT
+  $("refreshButton").addEventListener("click", async () => {
+    try {
+      await loadParticipants();
+    } catch (error) {
+      showMessage("dashboardMessage", error.message, "error");
+    }
+  });
+
+  $("logoutButton").addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      showMessage("dashboardMessage", error.message, "error");
+    }
+  });
 </script>
 </body>
 </html>
