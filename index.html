@@ -1,556 +1,176 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rhockstar Connect Referral Competition</title>
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
-      line-height: 1.6;
-    }
-
-    header {
-      padding: 20px 7%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      border-bottom: 1px solid #263449;
-    }
-
-    .logo {
-      color: #38bdf8;
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .logo span { color: white; }
-
-    .header-link {
-      color: white;
-      text-decoration: none;
-      background: #1e293b;
-      padding: 10px 16px;
-      border-radius: 8px;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 70px 20px 50px;
-      background: radial-gradient(ellipse at top, #243b70, #0f172a 70%);
-    }
-
-    .tag {
-      display: inline-block;
-      color: #38bdf8;
-      border: 1px solid #38bdf8;
-      border-radius: 30px;
-      padding: 5px 14px;
-      font-size: 13px;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: clamp(32px, 6vw, 54px);
-      line-height: 1.15;
-      margin-bottom: 20px;
-    }
-
-    h1 span { color: #38bdf8; }
-
-    .hero p {
-      max-width: 620px;
-      margin: 0 auto 25px;
-      color: #cbd5e1;
-    }
-
-    .button {
-      display: inline-block;
-      border: none;
-      background: #38bdf8;
-      color: #07111f;
-      padding: 14px 24px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 8px;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .button:hover { background: #7dd3fc; }
-
-    .button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .section {
-      max-width: 1100px;
-      padding: 45px 20px;
-      margin: auto;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-
-    .section-subtitle {
-      text-align: center;
-      color: #94a3b8;
-      margin-bottom: 30px;
-    }
-
-    .prizes {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: #172337;
-      border: 1px solid #293951;
-      padding: 25px;
-      border-radius: 14px;
-      text-align: center;
-    }
-
-    .prize-icon {
-      font-size: 34px;
-      margin-bottom: 8px;
-    }
-
-    .prize-position {
-      color: #cbd5e1;
-      font-size: 14px;
-    }
-
-    .prize-amount {
-      color: #38bdf8;
-      font-size: 30px;
-      font-weight: bold;
-      margin: 8px 0;
-    }
-
-    .register-box {
-      max-width: 600px;
-      margin: auto;
-      background: #172337;
-      border: 1px solid #293951;
-      border-radius: 14px;
-      padding: 25px;
-    }
-
-    .field { margin-bottom: 17px; }
-
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 14px;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #3a4b63;
-      border-radius: 8px;
-      background: #0f172a;
-      color: white;
-      outline: none;
-      font-size: 15px;
-    }
-
-    input:focus { border-color: #38bdf8; }
-
-    .register-box .button { width: 100%; }
-
-    .notice {
-      color: #94a3b8;
-      font-size: 12px;
-      margin-top: 15px;
-    }
-
-    #message {
-      margin-top: 15px;
-      font-size: 14px;
-      overflow-wrap: anywhere;
-    }
-
-    .leaderboard-wrap {
-      overflow-x: auto;
-      background: #172337;
-      border: 1px solid #293951;
-      border-radius: 12px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 420px;
-    }
-
-    th, td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #293951;
-    }
-
-    th {
-      color: #38bdf8;
-      background: #1e293b;
-    }
-
-    .empty {
-      text-align: center;
-      color: #94a3b8;
-      padding: 25px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 25px 15px;
-      color: #94a3b8;
-      border-top: 1px solid #263449;
-      font-size: 13px;
-    }
-
-    @media (max-width: 500px) {
-      header { padding: 16px; }
-      .logo { font-size: 17px; }
-      .hero { padding-top: 50px; }
-      .section { padding: 35px 16px; }
-      .register-box { padding: 20px; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rhockstar Connect Referral Competition</title>
+<style>
+:root{--bg:#0b1120;--panel:#111c30;--line:#263750;--text:#eaf2ff;--muted:#a4b3c9;--blue:#38bdf8;--purple:#8b5cf6}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#0b1120,#11102b);color:var(--text);font:16px Arial,sans-serif}
+main{width:min(1000px,92%);margin:30px auto}
+header,.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px}
+h1{font-size:clamp(25px,5vw,40px);margin:0 0 10px}
+h2{margin-top:0}
+p{color:var(--muted);line-height:1.6}
+input,button{width:100%;padding:13px;border-radius:9px;border:1px solid var(--line);margin:7px 0;font-size:15px}
+input{background:#0b1425;color:white}
+button{background:linear-gradient(90deg,#0284c7,#7c3aed);color:white;font-weight:bold;border:0;cursor:pointer}
+button:disabled{opacity:.5}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:12px;border-bottom:1px solid var(--line)}
+.small{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+#message{overflow-wrap:anywhere;color:#7dd3fc}
+</style>
 </head>
-
 <body>
+<main>
+<header>
+<h1>Rhockstar Connect</h1>
+<h2>Referral Competition</h2>
+<p>Share Rhockstar Connect, bring more people to the platform, and compete for prizes. Register below and await approval before sharing your referral link.</p>
+</header>
 
-  <header>
-    <div class="logo">Rhockstar <span>Connect</span></div>
-    <a href="#register" class="header-link">Join Competition</a>
-  </header>
+<div class="grid">
+<section class="panel">
+<h2>Join the competition</h2>
+<form id="registration">
+<input id="name" placeholder="Full name" maxlength="80" required>
+<input id="email" type="email" placeholder="Email address" required>
+<input id="destination" type="url" value="https://rhockstarconnect.com/" required>
+<button id="registerButton">Register</button>
+</form>
+<p id="message" role="status"></p>
+<p class="small">Use your real details. Each email can register once. Entries must be approved by the competition administrator.</p>
+</section>
 
-  <section class="hero">
-    <div class="tag">REFERRAL COMPETITION</div>
+<section class="panel">
+<h2>Competition prizes</h2>
+<div id="prizes">Loading prizes…</div>
+</section>
+</div>
 
-    <h1>Refer More.<br>Get More <span>Rewards.</span></h1>
+<section class="panel">
+<h2>Live leaderboard</h2>
+<p class="small">Only approved participants appear here. Click counts may take a short time to update.</p>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Rank</th><th>Participant</th><th>Clicks</th></tr></thead>
+<tbody id="leaderboard"><tr><td colspan="3">Loading leaderboard…</td></tr></tbody>
+</table>
+</div>
+</section>
+</main>
 
-    <p>
-      Invite people to discover Rhockstar Connect, share your referral
-      link, and compete for exciting cash prizes. The more eligible
-      referral clicks you get, the higher you can climb on the leaderboard.
-    </p>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, getDocs, query, orderBy, limit }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-    <a href="#register" class="button">Enter the Competition</a>
-  </section>
+const app = initializeApp({
+   apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
+  authDomain: "rhockstar-connect.firebaseapp.com",
+  projectId: "rhockstar-connect",
+appId: "1:137378826916:web:45b695d41fbd3eb940f431"
+});
 
-  <section class="section" id="prizes">
-    <h2 class="section-title">Win Cash Prizes</h2>
-    <p class="section-subtitle">
-      The top participants win the following prizes.
-    </p>
+const db = getFirestore(app);
+const message = document.getElementById("message");
 
-    <div class="prizes">
-      <div class="card">
-        <div class="prize-icon">🏆</div>
-        <div class="prize-position">1st Place</div>
-        <div class="prize-amount" id="firstPrize">₦100,000</div>
-        <p>Grand Prize</p>
-      </div>
+document.getElementById("registration").addEventListener("submit", async event => {
+  event.preventDefault();
 
-      <div class="card">
-        <div class="prize-icon">🥈</div>
-        <div class="prize-position">2nd Place</div>
-        <div class="prize-amount" id="secondPrize">₦50,000</div>
-        <p>Second Prize</p>
-      </div>
+  const button = document.getElementById("registerButton");
+  button.disabled = true;
+  message.textContent = "Submitting registration…";
 
-      <div class="card">
-        <div class="prize-icon">🥉</div>
-        <div class="prize-position">3rd Place</div>
-        <div class="prize-amount" id="thirdPrize">₦20,000</div>
-        <p>Third Prize</p>
-      </div>
-    </div>
-  </section>
+  try {
+    const response = await fetch("/.netlify/functions/register", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        destination: document.getElementById("destination").value
+      })
+    });
 
-  <section class="section" id="register">
-    <h2 class="section-title">Join the Competition</h2>
-    <p class="section-subtitle">
-      Submit your details and your existing Rhockstar Connect referral link.
-    </p>
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Registration failed.");
 
-    <div class="register-box">
-      <form id="registrationForm">
+    message.textContent =
+      result.message + " Your referral code is " + result.referralCode +
+      ". You will receive your tracking link after approval.";
+    event.target.reset();
+    document.getElementById("destination").value = "https://rhockstarconnect.com/";
+  } catch (error) {
+    message.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
 
-        <div class="field">
-          <label for="name">Full Name</label>
-          <input id="name" type="text"
-                 placeholder="Enter your full name"
-                 minlength="2" maxlength="100" required>
-        </div>
-
-        <div class="field">
-          <label for="email">Email Address</label>
-          <input id="email" type="email"
-                 placeholder="Enter your email"
-                 maxlength="254" required>
-        </div>
-
-        <div class="field">
-          <label for="referral">Your Rhockstar Connect Referral Link</label>
-          <input id="referral" type="url"
-                 placeholder="https://rhockstarconnect.com/..."
-                 required>
-        </div>
-
-        <button class="button" type="submit">
-          Submit Registration
-        </button>
-
-        <p class="notice">
-          Your entry needs approval before appearing on the official
-          leaderboard. Submitting this form does not mean you have won a prize.
-        </p>
-
-        <div id="message" role="status" aria-live="polite"></div>
-      </form>
-    </div>
-  </section>
-
-  <section class="section" id="leaderboard">
-    <h2 class="section-title">Live Leaderboard</h2>
-    <p class="section-subtitle">Follow the competition rankings.</p>
-
-    <div class="leaderboard-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Participant</th>
-            <th>Tracked Clicks</th>
-          </tr>
-        </thead>
-
-        <tbody id="leaderboardBody">
-          <tr>
-            <td colspan="3" class="empty">Loading leaderboard...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <footer>
-    © <span id="year"></span> Rhockstar Connect. All rights reserved.
-  </footer>
-
-  <script type="module">
-    import { db } from "./firebase.js";
-
-    import {
-      collection,
-      addDoc,
-      serverTimestamp,
-      doc,
-      onSnapshot,
-      query,
-      orderBy,
-      limit
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
-    document.getElementById("year").textContent =
-      new Date().getFullYear();
-
-    const form = document.getElementById("registrationForm");
-    const message = document.getElementById("message");
-    const submitButton = form.querySelector('button[type="submit"]');
-    const leaderboardBody = document.getElementById("leaderboardBody");
-
-    const money = value => {
-      const amount = Number(value);
-      if (!Number.isFinite(amount) || amount < 0) return "—";
-
-      return "₦" + amount.toLocaleString("en-NG", {
-        maximumFractionDigits: 2
-      });
-    };
-
-    // Live prize updates from Firebase.
-    onSnapshot(
-      doc(db, "settings", "prizes"),
-      snapshot => {
-        if (!snapshot.exists()) return;
-
-        const prizes = snapshot.data();
-
-        if (prizes.first !== undefined) {
-          document.getElementById("firstPrize").textContent =
-            money(prizes.first);
-        }
-
-        if (prizes.second !== undefined) {
-          document.getElementById("secondPrize").textContent =
-            money(prizes.second);
-        }
-
-        if (prizes.third !== undefined) {
-          document.getElementById("thirdPrize").textContent =
-            money(prizes.third);
-        }
-      },
-      error => {
-        console.error("Prize loading error:", error);
-      }
-    );
-
-    // Public-safe leaderboard only. Never query participants publicly.
-    const leaderboardQuery = query(
+async function loadLeaderboard() {
+  const body = document.getElementById("leaderboard");
+  try {
+    const snap = await getDocs(query(
       collection(db, "leaderboard"),
       orderBy("clicks", "desc"),
       limit(100)
-    );
+    ));
 
-    onSnapshot(
-      leaderboardQuery,
-      snapshot => {
-        leaderboardBody.replaceChildren();
-
-        if (snapshot.empty) {
-          showLeaderboardMessage(
-            "No approved participants have been published yet."
-          );
-          return;
-        }
-
-        const participants = snapshot.docs
-          .map(item => item.data())
-          .filter(person =>
-            typeof person.name === "string" &&
-            Number.isFinite(Number(person.clicks)) &&
-            Number(person.clicks) >= 0
-          )
-          .sort((a, b) => Number(b.clicks) - Number(a.clicks));
-
-        if (!participants.length) {
-          showLeaderboardMessage("No leaderboard entries are available.");
-          return;
-        }
-
-        participants.forEach((person, index) => {
-          const row = document.createElement("tr");
-
-          const rankCell = document.createElement("td");
-          rankCell.textContent = String(index + 1);
-
-          const nameCell = document.createElement("td");
-          nameCell.textContent = person.name;
-
-          const clicksCell = document.createElement("td");
-          clicksCell.textContent = Number(person.clicks).toLocaleString();
-
-          row.append(rankCell, nameCell, clicksCell);
-          leaderboardBody.appendChild(row);
-        });
-      },
-      error => {
-        console.error("Leaderboard loading error:", error);
-
-        showLeaderboardMessage(
-          "Unable to load the leaderboard right now."
-        );
-      }
-    );
-
-    function showLeaderboardMessage(text) {
-      leaderboardBody.replaceChildren();
-
-      const row = document.createElement("tr");
-      const cell = document.createElement("td");
-
-      cell.colSpan = 3;
-      cell.className = "empty";
-      cell.textContent = text;
-
-      row.appendChild(cell);
-      leaderboardBody.appendChild(row);
+    body.innerHTML = "";
+    if (snap.empty) {
+      body.innerHTML = '<tr><td colspan="3">No approved participants yet.</td></tr>';
+      return;
     }
 
-    // Registration form.
-    form.addEventListener("submit", async event => {
-      event.preventDefault();
-
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const referral = document.getElementById("referral").value.trim();
-
-      let url;
-
-      try {
-        url = new URL(referral);
-
-        if (
-          !["https:", "http:"].includes(url.protocol) ||
-          !url.hostname.includes(".")
-        ) {
-          throw new Error("Invalid referral link");
-        }
-      } catch {
-        message.style.color = "#f87171";
-        message.textContent = "Please enter a valid referral link.";
-        return;
+    let rank = 0;
+    snap.forEach(item => {
+      rank++;
+      const row = document.createElement("tr");
+      for (const value of [rank, item.data().name || "Participant", item.data().clicks || 0]) {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        row.appendChild(cell);
       }
-
-      submitButton.disabled = true;
-      submitButton.textContent = "Submitting...";
-      message.style.color = "#cbd5e1";
-      message.textContent = "Submitting your registration...";
-
-      try {
-        await addDoc(collection(db, "participants"), {
-          name,
-          email,
-          referral: url.href,
-          status: "pending",
-          clicks: 0,
-          submittedAt: serverTimestamp()
-        });
-
-        message.style.color = "#4ade80";
-        message.textContent =
-          "Registration submitted successfully! Your entry is pending admin approval.";
-
-        form.reset();
-      } catch (error) {
-        console.error("Registration error:", error);
-
-        message.style.color = "#f87171";
-
-        if (error.code === "permission-denied") {
-          message.textContent =
-            "Registration was blocked by Firebase security rules. Please contact the administrator.";
-        } else {
-          message.textContent =
-            "Registration failed. Please try again later.";
-        }
-      } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = "Submit Registration";
-      }
+      body.appendChild(row);
     });
-  </script>
+  } catch (error) {
+    body.innerHTML = '<tr><td colspan="3">Leaderboard unavailable. Check Firebase configuration and rules.</td></tr>';
+  }
+}
 
+async function loadPrizes() {
+  const box = document.getElementById("prizes");
+  try {
+    const snap = await getDoc(doc(db, "settings", "prizes"));
+    const prizes = snap.exists() ? snap.data().items || [] : [];
+
+    if (!prizes.length) {
+      box.textContent = "Prize details will be announced soon.";
+      return;
+    }
+
+    box.replaceChildren();
+    prizes.forEach(prize => {
+      const item = document.createElement("div");
+      const title = document.createElement("h3");
+      title.textContent = prize.title;
+      const description = document.createElement("p");
+      description.textContent = prize.description || "";
+      item.append(title, description);
+      box.appendChild(item);
+    });
+  } catch {
+    box.textContent = "Prize details will be announced soon.";
+  }
+}
+
+loadLeaderboard();
+loadPrizes();
+</script>
 </body>
 </html>
