@@ -18,7 +18,10 @@
       font-family: Arial, sans-serif;
     }
 
-    main { max-width: 1100px; margin: auto; }
+    main {
+      max-width: 1100px;
+      margin: auto;
+    }
 
     .panel {
       padding: 20px;
@@ -74,7 +77,10 @@
     }
 
     th { color: #38bdf8; }
-    a { color: #38bdf8; overflow-wrap: anywhere; }
+    a {
+      color: #38bdf8;
+      overflow-wrap: anywhere;
+    }
   </style>
 </head>
 
@@ -87,11 +93,21 @@
     <h2>Admin Login</h2>
 
     <form id="loginForm">
-      <input id="email" type="email"
-        placeholder="Admin email" autocomplete="username" required>
+      <input
+        id="email"
+        type="email"
+        placeholder="Admin email"
+        autocomplete="username"
+        required
+      >
 
-      <input id="password" type="password"
-        placeholder="Password" autocomplete="current-password" required>
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+      >
 
       <button id="loginButton" type="submit">Log In</button>
     </form>
@@ -102,13 +118,21 @@
   <div id="dashboard" class="hidden">
     <section class="panel">
       <p id="adminEmail" class="muted"></p>
-      <button id="refreshButton" type="button">Refresh Participants</button>
-      <button id="logoutButton" type="button">Log Out</button>
+
+      <button id="refreshButton" type="button">
+        Refresh Participants
+      </button>
+
+      <button id="logoutButton" type="button">
+        Log Out
+      </button>
+
       <p id="dashboardMessage" role="status"></p>
     </section>
 
     <section class="panel">
       <h2>Participants</h2>
+
       <div class="table-wrap">
         <table>
           <thead>
@@ -121,8 +145,11 @@
               <th>Save</th>
             </tr>
           </thead>
+
           <tbody id="participants">
-            <tr><td colspan="6">Sign in to load participants.</td></tr>
+            <tr>
+              <td colspan="6">Sign in to load participants.</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -130,25 +157,61 @@
 
     <section class="panel">
       <h2>Prize Management</h2>
+
       <p class="muted">One prize per line: title | description</p>
-      <textarea id="prizes" rows="7"
-        placeholder="First Prize | Cash prize&#10;Second Prize | Premium account"></textarea>
-      <button id="savePrizesButton" type="button">Save Prizes</button>
+
+      <textarea
+        id="prizes"
+        rows="7"
+        placeholder="First Prize | Cash prize&#10;Second Prize | Premium account"
+      ></textarea>
+
+      <button id="savePrizesButton" type="button">
+        Save Prizes
+      </button>
+
       <p id="prizeMessage" role="status"></p>
     </section>
   </div>
 </main>
 
 <script type="module">
-  import { auth } from "./firebase.js";
+  // Firebase CDN imports: suitable for plain HTML deployment.
+  import {
+    initializeApp,
+    getApp,
+    getApps
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
   import {
+    getAuth,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
+  // Existing Firebase project configuration.
+  const firebaseConfig = {
+    apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
+    authDomain: "rcreferral-contest.firebaseapp.com",
+    databaseURL:
+      "https://rcreferral-contest-default-rtdb.firebaseio.com",
+    projectId: "rcreferral-contest",
+    storageBucket: "rcreferral-contest.firebasestorage.app",
+    messagingSenderId: "137378826916",
+    appId: "1:137378826916:web:45b695d41fbd3eb940f431",
+    measurementId: "G-9QCXRR9V56"
+  };
+
+  // Reuse the Firebase app if already initialized on this page.
+  const app = getApps().length
+    ? getApp()
+    : initializeApp(firebaseConfig);
+
+  const auth = getAuth(app);
+
   const $ = id => document.getElementById(id);
+
   let user = null;
 
   function message(id, text, type = "") {
@@ -156,8 +219,11 @@
     $(id).className = type;
   }
 
+  // Communicate with the existing secure Netlify admin function.
   async function api(action, data = {}) {
-    if (!user) throw new Error("Please log in.");
+    if (!user) {
+      throw new Error("Please log in.");
+    }
 
     const token = await user.getIdToken();
 
@@ -173,12 +239,15 @@
     const result = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(result.error || "Admin request failed.");
+      throw new Error(
+        result.error || "Admin request failed."
+      );
     }
 
     return result;
   }
 
+  // Admin login.
   $("loginForm").addEventListener("submit", async event => {
     event.preventDefault();
 
@@ -192,12 +261,17 @@
         $("email").value.trim(),
         $("password").value
       );
+
       message("loginMessage", "");
     } catch (error) {
       console.error("Firebase login error:", error);
+
       message(
         "loginMessage",
-        "Login failed: " + error.code + " — " + error.message,
+        "Login failed: " +
+          (error.code || "unknown-error") +
+          " — " +
+          error.message,
         "error"
       );
     } finally {
@@ -205,33 +279,46 @@
     }
   });
 
+  // Track the current authentication state.
   onAuthStateChanged(auth, async currentUser => {
     user = currentUser;
 
     $("loginPanel").classList.toggle("hidden", !!user);
     $("dashboard").classList.toggle("hidden", !user);
 
-    if (!user) return;
+    if (!user) {
+      $("adminEmail").textContent = "";
+      return;
+    }
 
-    $("adminEmail").textContent = "Signed in as " + (user.email || "");
+    $("adminEmail").textContent =
+      "Signed in as " + (user.email || "");
+
+    message("dashboardMessage", "Loading admin data…");
 
     try {
       await loadParticipants();
       await loadPrizes();
+
+      message("dashboardMessage", "Admin data loaded.", "success");
     } catch (error) {
+      console.error("Admin data loading error:", error);
       message("dashboardMessage", error.message, "error");
     }
   });
 
+  // Load participants from the secure backend.
   async function loadParticipants() {
     const result = await api("list");
     const entries = result.participants || [];
     const tbody = $("participants");
+
     tbody.replaceChildren();
 
     if (!entries.length) {
       const row = tbody.insertRow();
       const cell = row.insertCell();
+
       cell.colSpan = 6;
       cell.textContent = "No participants registered yet.";
       return;
@@ -240,50 +327,69 @@
     for (const p of entries) {
       const row = tbody.insertRow();
 
+      // Participant name.
       const nameCell = row.insertCell();
       const name = document.createElement("input");
+
       name.value = p.name || "";
       name.maxLength = 80;
       nameCell.appendChild(name);
 
+      // Email.
       row.insertCell().textContent = p.email || "";
 
+      // Click count.
       const clickCell = row.insertCell();
       const clicks = document.createElement("input");
+
       clicks.type = "number";
       clicks.min = "0";
       clicks.step = "1";
-      clicks.value = p.clicks || 0;
+      clicks.value = p.clicks ?? 0;
+
       clickCell.appendChild(clicks);
 
+      // Registration status.
       const statusCell = row.insertCell();
       const status = document.createElement("select");
 
       ["pending", "approved", "rejected"].forEach(value => {
         const option = document.createElement("option");
+
         option.value = value;
         option.textContent = value;
         option.selected = value === p.status;
+
         status.appendChild(option);
       });
 
       statusCell.appendChild(status);
 
+      // Referral link.
       const linkCell = row.insertCell();
+
       if (p.referralCode) {
         const link = document.createElement("a");
-        link.href = location.origin + "/ref/" +
+
+        link.href =
+          location.origin +
+          "/ref/" +
           encodeURIComponent(p.referralCode);
+
         link.textContent = link.href;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
+
         linkCell.appendChild(link);
       } else {
         linkCell.textContent = "No referral code";
       }
 
+      // Save participant changes.
       const saveCell = row.insertCell();
       const save = document.createElement("button");
+
+      save.type = "button";
       save.textContent = "Save";
 
       save.addEventListener("click", async () => {
@@ -305,9 +411,15 @@
             destination: p.destination
           });
 
-          message("dashboardMessage", "Participant updated.", "success");
+          message(
+            "dashboardMessage",
+            "Participant updated.",
+            "success"
+          );
+
           await loadParticipants();
         } catch (error) {
+          console.error("Participant save error:", error);
           message("dashboardMessage", error.message, "error");
         } finally {
           save.disabled = false;
@@ -318,50 +430,89 @@
     }
   }
 
+  // Load the existing prize settings.
   async function loadPrizes() {
     const result = await api("getPrizes");
+
     $("prizes").value = (result.prizes || [])
       .map(p => p.title + " | " + (p.description || ""))
       .join("\n");
   }
 
+  // Save prize settings.
   $("savePrizesButton").addEventListener("click", async () => {
+    const button = $("savePrizesButton");
+    button.disabled = true;
+
     try {
       const prizes = $("prizes").value
         .split("\n")
         .map(line => line.trim())
         .filter(Boolean)
         .map(line => {
-          const i = line.indexOf("|");
-          return i < 0
-            ? { title: line, description: "" }
-            : {
-                title: line.slice(0, i).trim(),
-                description: line.slice(i + 1).trim()
-              };
+          const separator = line.indexOf("|");
+
+          if (separator < 0) {
+            return {
+              title: line,
+              description: ""
+            };
+          }
+
+          return {
+            title: line.slice(0, separator).trim(),
+            description: line.slice(separator + 1).trim()
+          };
         });
 
       await api("savePrizes", { prizes });
-      message("prizeMessage", "Prizes saved successfully.", "success");
+
+      message(
+        "prizeMessage",
+        "Prizes saved successfully.",
+        "success"
+      );
     } catch (error) {
+      console.error("Prize save error:", error);
       message("prizeMessage", error.message, "error");
+    } finally {
+      button.disabled = false;
     }
   });
 
+  // Refresh the participant list.
   $("refreshButton").addEventListener("click", async () => {
+    const button = $("refreshButton");
+    button.disabled = true;
+
     try {
       await loadParticipants();
-      message("dashboardMessage", "Participants refreshed.", "success");
+
+      message(
+        "dashboardMessage",
+        "Participants refreshed.",
+        "success"
+      );
     } catch (error) {
+      console.error("Refresh error:", error);
       message("dashboardMessage", error.message, "error");
+    } finally {
+      button.disabled = false;
     }
   });
 
+  // Log out.
   $("logoutButton").addEventListener("click", async () => {
+    const button = $("logoutButton");
+    button.disabled = true;
+
     try {
       await signOut(auth);
     } catch (error) {
+      console.error("Logout error:", error);
       message("dashboardMessage", error.message, "error");
+    } finally {
+      button.disabled = false;
     }
   });
 </script>
