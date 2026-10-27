@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1120">
   <title>Rhockstar Referral Contest Admin</title>
+
   <style>
     * { box-sizing: border-box; }
 
@@ -52,7 +54,6 @@
     }
 
     button:disabled { opacity: .6; }
-
     .hidden { display: none; }
     .error { color: #f87171; }
     .success { color: #4ade80; }
@@ -76,6 +77,7 @@
     a { color: #38bdf8; overflow-wrap: anywhere; }
   </style>
 </head>
+
 <body>
 <main>
   <h1>Rhockstar Connect</h1>
@@ -138,16 +140,16 @@
 </main>
 
 <script type="module">
+  import { auth } from "./firebase.js";
+
   import {
-    auth,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
-  } from "./firebase.js";
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
   const $ = id => document.getElementById(id);
   let user = null;
-  let entries = [];
 
   function message(id, text, type = "") {
     $(id).textContent = text;
@@ -157,7 +159,7 @@
   async function api(action, data = {}) {
     if (!user) throw new Error("Please log in.");
 
-    const token = await user.getIdToken(true);
+    const token = await user.getIdToken();
 
     const response = await fetch("/.netlify/functions/admin", {
       method: "POST",
@@ -180,7 +182,8 @@
   $("loginForm").addEventListener("submit", async event => {
     event.preventDefault();
 
-    $("loginButton").disabled = true;
+    const button = $("loginButton");
+    button.disabled = true;
     message("loginMessage", "Signing in…");
 
     try {
@@ -191,9 +194,14 @@
       );
       message("loginMessage", "");
     } catch (error) {
-      message("loginMessage", "Login failed: " + error.message, "error");
+      console.error("Firebase login error:", error);
+      message(
+        "loginMessage",
+        "Login failed: " + error.code + " — " + error.message,
+        "error"
+      );
     } finally {
-      $("loginButton").disabled = false;
+      button.disabled = false;
     }
   });
 
@@ -205,10 +213,9 @@
 
     if (!user) return;
 
-    $("adminEmail").textContent = "Signed in as " + user.email;
+    $("adminEmail").textContent = "Signed in as " + (user.email || "");
 
     try {
-      await api("list"); // Server verifies administrator authorization.
       await loadParticipants();
       await loadPrizes();
     } catch (error) {
@@ -218,7 +225,7 @@
 
   async function loadParticipants() {
     const result = await api("list");
-    entries = result.participants || [];
+    const entries = result.participants || [];
     const tbody = $("participants");
     tbody.replaceChildren();
 
@@ -265,7 +272,8 @@
       const linkCell = row.insertCell();
       if (p.referralCode) {
         const link = document.createElement("a");
-        link.href = location.origin + "/ref/" + p.referralCode;
+        link.href = location.origin + "/ref/" +
+          encodeURIComponent(p.referralCode);
         link.textContent = link.href;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
@@ -350,7 +358,11 @@
   });
 
   $("logoutButton").addEventListener("click", async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      message("dashboardMessage", error.message, "error");
+    }
   });
 </script>
 </body>
