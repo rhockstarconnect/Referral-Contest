@@ -5,7 +5,6 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 
-// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
   authDomain: "rcreferral-contest.firebaseapp.com",
@@ -18,17 +17,14 @@ const firebaseConfig = {
   measurementId: "G-9QCXRR9V56"
 };
 
-// Initialize Firebase only once
 const app = getApps().length
   ? getApp()
   : initializeApp(firebaseConfig);
 
-// Initialize Firebase services
 const auth = getAuth(app);
 const db = getFirestore(app);
 const database = getDatabase(app);
 
-// Initialize Analytics safely where supported
 let analytics = null;
 
 if (typeof window !== "undefined") {
@@ -43,5 +39,4 @@ if (typeof window !== "undefined") {
     });
 }
 
-// Export services for use in other files
 export { app, auth, db, database, analytics };
