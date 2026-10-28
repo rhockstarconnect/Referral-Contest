@@ -13,7 +13,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",
+  apiKey: "AIzaSyBl4ZL9EMReQYWu2Z7HuZFb770AZGeVXew",
   authDomain: "rcreferral-contest.firebaseapp.com",
   databaseURL: "https://rcreferral-contest-default-rtdb.firebaseio.com",
   projectId: "rcreferral-contest",
