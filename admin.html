@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Referral Contest Admin | Rhockstar Connect</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1, h2 { color: #38bdf8; }
+
+    .panel {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin: 7px 0;
+      border-radius: 7px;
+      font: inherit;
+    }
+
+    input, textarea {
+      background: #0f172a;
+      color: white;
+      border: 1px solid #475569;
+    }
+
+    textarea {
+      min-height: 180px;
+      font-family: monospace;
+    }
+
+    button {
+      background: #38bdf8;
+      color: #0f172a;
+      border: 0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .participant {
+      border-bottom: 1px solid #475569;
+      padding: 14px 0;
+    }
+
+    .participant strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .status {
+      overflow-wrap: anywhere;
+      color: #cbd5e1;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+
+<body>
+<main>
+  <h1>Rhockstar Connect</h1>
+  <p>Referral Contest Administration</p>
+
+  <section class="panel" id="loginPanel">
+    <h2>Admin Login</h2>
+    <p>Sign in with your authorized administrator Google account.</p>
+    <button id="loginBtn">Sign in with Google</button>
+    <p id="loginMessage" class="status"></p>
+  </section>
+
+  <div id="dashboard" class="hidden">
+    <p id="adminInfo" class="status"></p>
+    <button id="logoutBtn" class="danger">Sign Out</button>
+
+    <section class="panel">
+      <h2>Edit Contest Prizes</h2>
+      <p>
+        This editor loads the existing settings/prizes document.
+        Keep its existing JSON structure unless you also update
+        the code that displays prizes on your homepage.
+      </p>
+
+      <textarea id="prizesJson"
+        spellcheck="false"
+        aria-label="Contest prize settings"></textarea>
+
+      <button id="loadPrizesBtn">Reload Existing Prizes</button>
+      <button id="savePrizesBtn">Save Prize Changes</button>
+      <p id="prizeMessage" class="status"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Manage Referral Counts</h2>
+      <p>
+        Edit a participant's current total. Automatic referral
+        increments can continue from the saved count.
+      </p>
+
+      <button id="refreshBtn">Refresh Participants</button>
+      <input id="searchBox"
+        placeholder="Search participants by name or email">
+
+      <div id="participantsList"></div>
+      <p id="countMessage" class="status"></p>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+  import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged,
+    signOut
+  } from
+    "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    getDocs,
+    collection,
+    updateDoc,
+    setDoc,
+    writeBatch
+  } from
+    "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+  // IMPORTANT:
+  // Copy the EXISTING firebaseConfig object from your
+  // js/firebase.js file into this location.
+  // Do not create a new Firebase project.
+  
+const firebaseConfig = {
+  apiKey: "AIzaSyBl4ZL9EMReQYWu2Z7HuZFb770AZGeVXew",
+  authDomain: "rcreferral-contest.firebaseapp.com",
+  databaseURL: "https://rcreferral-contest-default-rtdb.firebaseio.com",
+  projectId: "rcreferral-contest",
+  storageBucket: "rcreferral-contest.firebasestorage.app",
+  messagingSenderId: "137378826916",
+  appId: "1:137378826916:web:45b695d41fbd3eb940f431",
+  measurementId: "G-9QCXRR9V56"
+};
+
+
+  const ADMIN_EMAIL = "akusu2841@gmail.com";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  const $ = id => document.getElementById(id);
+
+  let currentAdmin = null;
+  let participantsCache = [];
+
+  function showMessage(id, message) {
+    $(id).textContent = message;
+  }
+
+  function requireAdmin() {
+    if (!currentAdmin ||
+        currentAdmin.email !== ADMIN_EMAIL) {
+      throw new Error("Administrator access required.");
+    }
+  }
+
+  $("loginBtn").addEventListener("click", async () => {
+    try {
+      showMessage("loginMessage", "Signing in...");
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      showMessage("loginMessage", error.message);
+    }
+  });
+
+  $("logoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+  });
+
+  onAuthStateChanged(auth, async user => {
+    currentAdmin = null;
+
+    $("dashboard").classList.add("hidden");
+    $("loginPanel").classList.remove("hidden");
+
+    if (!user) return;
+
+    if (user.email !== ADMIN_EMAIL) {
+      await signOut(auth);
+      showMessage(
+        "loginMessage",
+        "Access denied. Use the authorized admin account."
+      );
+      return;
+    }
+
+    currentAdmin = user;
+    $("loginPanel").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+    $("adminInfo").textContent =
+      "Signed in as " + user.email;
+
+    await loadPrizes();
+    await loadParticipants();
+  });
+
+  async function loadPrizes() {
+    requireAdmin();
+
+    showMessage("prizeMessage", "Loading prize settings...");
+
+    try {
+      const ref = doc(db, "settings", "prizes");
+      const snapshot = await getDoc(ref);
+
+      if (!snapshot.exists()) {
+        showMessage(
+          "prizeMessage",
+          "The existing settings/prizes document was not found. Nothing was created."
+        );
+        return;
+      }
+
+      $("prizesJson").value =
+        JSON.stringify(snapshot.data(), null, 2);
+
+      showMessage("prizeMessage", "Existing prizes loaded.");
+    } catch (error) {
+      showMessage("prizeMessage", error.message);
+    }
+  }
+
+  $("loadPrizesBtn").addEventListener("click", loadPrizes);
+
+  $("savePrizesBtn").addEventListener("click", async () => {
+    try {
+      requireAdmin();
+
+      const existingRef = doc(db, "settings", "prizes");
+      const existing = await getDoc(existingRef);
+
+      if (!existing.exists()) {
+        throw new Error(
+          "Prize document does not exist. Save cancelled."
+        );
+      }
+
+      const updatedPrizes = JSON.parse($("prizesJson").value);
+
+      if (
+        !updatedPrizes ||
+        typeof updatedPrizes !== "object" ||
+        Array.isArray(updatedPrizes)
+      ) {
+        throw new Error("Enter a valid JSON object.");
+      }
+
+      if (!confirm(
+        "Save these prize settings to Firebase?"
+      )) return;
+
+      await setDoc(existingRef, updatedPrizes);
+
+      showMessage(
+        "prizeMessage",
+        "Prize settings saved successfully."
+      );
+    } catch (error) {
+      showMessage("prizeMessage", error.message);
+    }
+  });
+
+  async function loadParticipants() {
+    requireAdmin();
+
+    showMessage("countMessage", "Loading participants...");
+
+    try {
+      const snapshot = await getDocs(
+        collection(db, "participants")
+      );
+
+      participantsCache = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+
+      renderParticipants();
+      showMessage(
+        "countMessage",
+        participantsCache.length + " participants loaded."
+      );
+    } catch (error) {
+      showMessage("countMessage", error.message);
+    }
+  }
+
+  $("refreshBtn").addEventListener(
+    "click", loadParticipants
+  );
+
+  $("searchBox").addEventListener(
+    "input", renderParticipants
+  );
+
+  function renderParticipants() {
+    const query = $("searchBox").value
+      .trim().toLowerCase();
+
+    const list = $("participantsList");
+    list.replaceChildren();
+
+    const filtered = participantsCache.filter(person =>
+      String(person.name || "").toLowerCase().includes(query) ||
+      String(person.email || "").toLowerCase().includes(query)
+    );
+
+    filtered.forEach(person => {
+      const row = document.createElement("div");
+      row.className = "participant";
+
+      const name = document.createElement("strong");
+      name.textContent = person.name || "Unnamed participant";
+
+      const details = document.createElement("p");
+      details.className = "status";
+      details.textContent =
+        (person.email || "No email") +
+        " | Status: " + (person.status || "unknown");
+
+      const label = document.createElement("label");
+      label.textContent = "Referral count";
+
+      const count = document.createElement("input");
+      count.type = "number";
+      count.min = "0";
+      count.step = "1";
+      count.value = Number(person.clicks || 0);
+      count.setAttribute(
+        "aria-label",
+        "Referral count for " + (person.name || person.id)
+      );
+
+      const save = document.createElement("button");
+      save.textContent = "Save Count";
+
+      save.addEventListener("click", async () => {
+        try {
+          requireAdmin();
+
+          const newCount = Number(count.value);
+
+          if (
+            !Number.isSafeInteger(newCount) ||
+            newCount < 0
+          ) {
+            throw new Error(
+              "Enter a whole number greater than or equal to zero."
+            );
+          }
+
+          save.disabled = true;
+
+          const participantRef =
+            doc(db, "participants", person.id);
+
+          // Confirm the record still exists and use its latest data.
+          const latest = await getDoc(participantRef);
+
+          if (!latest.exists()) {
+            throw new Error("Participant no longer exists.");
+          }
+
+          const batch = writeBatch(db);
+
+          // Change only the count; preserve other participant fields.
+          batch.update(participantRef, {
+            clicks: newCount
+          });
+
+          // Update the leaderboard only if its record already exists.
+          // This avoids creating a leaderboard entry for a pending
+          // participant who was not previously on the leaderboard.
+          const leaderboardRef =
+            doc(db, "leaderboard", person.id);
+
+          const leaderboardSnapshot =
+            await getDoc(leaderboardRef);
+
+          if (leaderboardSnapshot.exists()) {
+            batch.update(leaderboardRef, {
+              clicks: newCount
+            });
+          }
+
+          await batch.commit();
+
+          person.clicks = newCount;
+          count.value = newCount;
+
+          showMessage(
+            "countMessage",
+            "Count saved for " +
+              (person.name || person.id) + "."
+          );
+        } catch (error) {
+          showMessage("countMessage", error.message);
+        } finally {
+          save.disabled = false;
+        }
+      });
+
+      row.append(name, details, label, count, save);
+      list.appendChild(row);
+    });
+  }
+</script>
+</body>
+</html>
