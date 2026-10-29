@@ -1,6 +1,6 @@
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import {getAuth,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-const firebaseConfig={apiKey:"AIzaSyDxDjlzI_lEI1MbswR4lBbPJ8zspMRYdOY",authDomain:"rcreferral-contest.firebaseapp.com",projectId:"rcreferral-contest",appId:"1:137378826916:web:45b695d41fbd3eb940f431"};
+const firebaseConfig={apiKey:"AIzaSyBl4ZL9EMReQYWu2Z7HuZFb770AZGeVXew",authDomain:"rcreferral-contest.firebaseapp.com",projectId:"rcreferral-contest",appId:"1:137378826916:web:45b695d41fbd3eb940f431"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),$=id=>document.getElementById(id);let participants=[];
 function message(t,type=""){ $("message").textContent=t;$("message").className="message "+type }
 async function api(action,body=null){if(!auth.currentUser)throw Error("Please log in again.");const token=await auth.currentUser.getIdToken(true);const r=await fetch("/api/admin",{method:body?"POST":"GET",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},body:body?JSON.stringify({action,...body}):undefined});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Request failed");return d}
