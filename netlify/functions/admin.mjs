@@ -5,19 +5,14 @@ const ADMIN_EMAIL = "akusu2841@gmail.com";
 
 function getFirebaseAdmin() {
   if (!admin.apps.length) {
-    const serviceAccountJSON =
-      process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
-    if (!serviceAccountJSON) {
-      throw new Error(
-        "Missing FIREBASE_SERVICE_ACCOUNT_JSON environment variable."
-      );
+    if (!raw) {
+      throw new Error("Missing Firebase service account configuration.");
     }
 
     admin.initializeApp({
-      credential: admin.credential.cert(
-        JSON.parse(serviceAccountJSON)
-      )
+      credential: admin.credential.cert(JSON.parse(raw))
     });
   }
 
@@ -35,119 +30,81 @@ function response(statusCode, data) {
   };
 }
 
-export default async function handler(req) {
+export async function handler(event) {
   try {
     const firebase = getFirebaseAdmin();
-
-    // Verify the administrator's Firebase login token.
-    const authorization =
-      req.headers.get("authorization") || "";
+    const authorization = event.headers?.authorization || "";
 
     if (!authorization.startsWith("Bearer ")) {
-      return response(401, {
-        error: "Please log in as administrator."
-      });
+      return response(401, { error: "Please log in again." });
     }
 
-    const token = authorization.slice(7);
-
-    const decoded = await firebase
-      .auth()
-      .verifyIdToken(token);
+    const decoded = await firebase.auth().verifyIdToken(
+      authorization.slice(7)
+    );
 
     if (
       (decoded.email || "").toLowerCase() !==
       ADMIN_EMAIL.toLowerCase()
     ) {
-      return response(403, {
-        error: "You are not authorized to manage this contest."
-      });
+      return response(403, { error: "Administrator access denied." });
     }
 
     const db = firebase.firestore();
 
-    // LOAD SETTINGS AND PARTICIPANTS
-    if (req.method === "GET") {
-      const [participantSnapshot, settingsSnapshot] =
-        await Promise.all([
-          db.collection("participants").get(),
-          db.collection("settings").doc("contest").get()
-        ]);
+    // Load participants and settings.
+    if (event.httpMethod === "GET") {
+      const [participantSnapshot, settingsSnapshot] = await Promise.all([
+        db.collection("participants").get(),
+        db.collection("settings").doc("contest").get()
+      ]);
 
-      const participants = participantSnapshot.docs.map(
-        document => ({
-          id: document.id,
-          ...document.data(),
-          submittedAt:
-            document.data().submittedAt?.toDate?.()
-              ?.toISOString() || null
-        })
-      );
+      const participants = participantSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        submittedAt: doc.data().submittedAt?.toDate?.()?.toISOString() || null
+      }));
 
       return response(200, {
         success: true,
         participants,
-        settings: settingsSnapshot.exists
-          ? settingsSnapshot.data()
-          : {}
+        settings: settingsSnapshot.exists ? settingsSnapshot.data() : {}
       });
     }
 
-    if (req.method !== "POST") {
-      return response(405, {
-        error: "Method not allowed."
-      });
+    if (event.httpMethod !== "POST") {
+      return response(405, { error: "Method not allowed." });
     }
 
-    const body = await req.json();
-    const action = body.action;
+    const body = JSON.parse(event.body || "{}");
+    const dbSettings = body.settings || {};
 
-    // SAVE PRIZES AND CONTEST SETTINGS
-    if (action === "saveSettings") {
-      const s = body.settings || {};
+    if (body.action === "saveSettings") {
+      const prize1 = Number(dbSettings.prize1);
+      const prize2 = Number(dbSettings.prize2);
+      const prize3 = Number(dbSettings.prize3);
 
-      const prize1 = Number(s.prize1);
-      const prize2 = Number(s.prize2);
-      const prize3 = Number(s.prize3);
-
-      if (
-        ![prize1, prize2, prize3].every(
-          n => Number.isSafeInteger(n) && n >= 0
-        )
-      ) {
+      if (![prize1, prize2, prize3].every(
+        n => Number.isSafeInteger(n) && n >= 0
+      )) {
         return response(400, {
           error: "Prize amounts must be valid whole numbers."
         });
       }
 
-      const settings = {
+      await db.collection("settings").doc("contest").set({
         title: String(
-          s.title || "Rhockstar Connect Referral Contest"
+          dbSettings.title || "Rhockstar Connect Referral Contest"
         ).trim().slice(0, 120),
-
         prize1,
         prize2,
         prize3,
-
-        announcement: String(
-          s.announcement || ""
-        ).slice(0, 3000),
-
-        contestOpen: s.contestOpen === true,
-
-        leaderboardEnabled:
-          s.leaderboardEnabled === true,
-
-        updatedAt:
-          admin.firestore.FieldValue.serverTimestamp(),
-
+        announcement: String(dbSettings.announcement || "").slice(0, 3000),
+        contestOpen: dbSettings.contestOpen === true,
+        leaderboardEnabled: dbSettings.leaderboardEnabled === true,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedBy: decoded.email
-      };
-
-      await db
-        .collection("settings")
-        .doc("contest")
-        .set(settings, { merge: true });
+      }, { merge: true });
 
       return response(200, {
         success: true,
@@ -155,148 +112,93 @@ export default async function handler(req) {
       });
     }
 
-    // UPDATE A PARTICIPANT
-    if (action === "updateParticipant") {
+    if (body.action === "updateParticipant") {
       const id = String(body.id || "");
-      const updates = body.updates || {};
+      const u = body.updates || {};
 
       if (!/^[A-Za-z0-9_-]{1,150}$/.test(id)) {
-        return response(400, {
-          error: "Invalid participant ID."
-        });
+        return response(400, { error: "Invalid participant ID." });
       }
 
-      const name = String(updates.name || "").trim();
-      const originalLink = String(
-        updates.originalLink || ""
-      ).trim();
+      const name = String(u.name || "").trim();
+      const originalLink = String(u.originalLink || "").trim();
 
       if (name.length < 2 || name.length > 100) {
-        return response(400, {
-          error: "Name must contain 2 to 100 characters."
-        });
+        return response(400, { error: "Name must be 2–100 characters." });
       }
 
-      let referralURL;
-
+      let link;
       try {
-        referralURL = new URL(originalLink);
+        link = new URL(originalLink);
       } catch {
-        return response(400, {
-          error: "Enter a valid original referral link."
-        });
+        return response(400, { error: "Enter a valid original referral link." });
       }
 
       if (
-        referralURL.protocol !== "https:" ||
+        link.protocol !== "https:" ||
         !(
-          referralURL.hostname === "rhockstarconnect.com" ||
-          referralURL.hostname.endsWith(
-            ".rhockstarconnect.com"
-          )
+          link.hostname === "rhockstarconnect.com" ||
+          link.hostname.endsWith(".rhockstarconnect.com")
         )
       ) {
         return response(400, {
-          error:
-            "The original link must use rhockstarconnect.com."
+          error: "The link must use rhockstarconnect.com."
         });
       }
 
-      const clicks = Number(updates.clicks);
-      const registrations = Number(updates.registrations);
+      const clicks = Number(u.clicks);
+      const registrations = Number(u.registrations);
 
-      if (
-        !Number.isSafeInteger(clicks) ||
-        clicks < 0 ||
-        !Number.isSafeInteger(registrations) ||
-        registrations < 0
-      ) {
-        return response(400, {
-          error: "Counts must be whole numbers of zero or more."
-        });
+      if (![clicks, registrations].every(
+        n => Number.isSafeInteger(n) && n >= 0
+      )) {
+        return response(400, { error: "Counts must be whole numbers of zero or more." });
       }
 
-      const allowedStatuses = [
-        "pending",
-        "approved",
-        "rejected"
-      ];
-
-      if (!allowedStatuses.includes(updates.status)) {
-        return response(400, {
-          error: "Invalid participant status."
-        });
+      if (!["pending", "approved", "rejected"].includes(u.status)) {
+        return response(400, { error: "Invalid participant status." });
       }
 
-      const participantRef = db
-        .collection("participants")
-        .doc(id);
-
-      const participantSnapshot = await participantRef.get();
-
-      if (!participantSnapshot.exists) {
-        return response(404, {
-          error: "Participant not found."
-        });
+      const ref = db.collection("participants").doc(id);
+      if (!(await ref.get()).exists) {
+        return response(404, { error: "Participant not found." });
       }
 
-      await participantRef.update({
+      await ref.update({
         name,
-        originalLink: referralURL.toString(),
+        originalLink: link.toString(),
         clicks,
         registrations,
-        status: updates.status,
-        updatedAt:
-          admin.firestore.FieldValue.serverTimestamp(),
+        status: u.status,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedBy: decoded.email
       });
 
-      return response(200, {
-        success: true,
-        message: "Participant updated successfully."
-      });
+      return response(200, { success: true, message: "Participant updated." });
     }
 
-    // DELETE A PARTICIPANT
-    if (action === "deleteParticipant") {
+    if (body.action === "deleteParticipant") {
       const id = String(body.id || "");
 
       if (!/^[A-Za-z0-9_-]{1,150}$/.test(id)) {
-        return response(400, {
-          error: "Invalid participant ID."
-        });
+        return response(400, { error: "Invalid participant ID." });
       }
 
-      const participantRef = db
-        .collection("participants")
-        .doc(id);
-
-      const participantSnapshot = await participantRef.get();
-
-      if (!participantSnapshot.exists) {
-        return response(404, {
-          error: "Participant not found."
-        });
+      const ref = db.collection("participants").doc(id);
+      if (!(await ref.get()).exists) {
+        return response(404, { error: "Participant not found." });
       }
 
-      await participantRef.delete();
-
-      return response(200, {
-        success: true,
-        message: "Participant deleted successfully."
-      });
+      await ref.delete();
+      return response(200, { success: true, message: "Participant deleted." });
     }
 
-    return response(400, {
-      error: "Unknown admin action: " + String(action)
-    });
-
+    return response(400, { error: "Unknown admin action." });
   } catch (error) {
     console.error("Admin function error:", error);
 
     return response(500, {
-      error:
-        "The admin request failed. Check your Netlify function logs and Firebase configuration."
+      error: error.message || "The admin request failed."
     });
   }
 }
