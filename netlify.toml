@@ -1,6 +1,25 @@
-# Merge this redirect into your existing netlify.toml. Keep the register-referral and /r/* redirects too.
+
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/register-referral"
+  to = "/.netlify/functions/register-referral"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/admin"
   to = "/.netlify/functions/admin"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/r/*"
+  to = "/.netlify/functions/track?code=:splat"
   status = 200
   force = true
