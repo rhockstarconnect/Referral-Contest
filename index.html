@@ -1,7 +1,205 @@
+
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1020"><title>Rhockstar Connect | Referral Contest</title><link rel="stylesheet" href="style.css"></head>
-<body><header class="topbar"><div class="brand-mark">RC</div><div><strong>Rhockstar Connect</strong><span>Referral Contest</span></div></header>
-<main class="wrap"><section class="hero"><p class="eyebrow">INVITE · CONNECT · WIN</p><h1>Your link.<br><span>Your reach. Your reward.</span></h1><p class="muted">Enter your name and your original Rhockstar Connect referral link. We'll create a unique contest link so your visits can be tracked.</p></section>
-<section class="panel"><p class="eyebrow">JOIN THE CONTEST</p><h2>Get your tracking link</h2><form id="referralForm"><label for="name">Your name</label><input id="name" maxlength="100" placeholder="Enter your full name" required><label for="originalLink">Your Rhockstar Connect referral link</label><input id="originalLink" type="url" placeholder="https://rhockstarconnect.com/..." required><p class="hint">Paste the referral link you copied from Rhockstar Connect, not the contest website address.</p><button id="submitBtn" class="button button-primary full" type="submit">Generate my tracking link</button></form><p id="formMessage" class="message" role="status"></p>
-<section id="result" class="result hidden"><div class="success-mark">✓</div><h3>Your tracking link is ready!</h3><p class="muted">Share this contest link. Each visit will be counted before the visitor is redirected to your original Rhockstar Connect referral link.</p><label for="trackingLink">Your unique contest link</label><div class="link-row"><input id="trackingLink" readonly><button id="copyBtn" class="button button-primary" type="button">Copy</button></div><p id="copyMessage" class="message" role="status"></p><div class="stats"><article class="stat-card"><span>Tracked clicks</span><strong id="clickCount">0</strong></article><article class="stat-card"><span>Contest code</span><strong id="codeValue">—</strong></article></div><p class="hint">Clicks are not the same as verified Rhockstar Connect registrations.</p></section></section>
-<section class="info-grid"><article class="info-card"><span class="number">01</span><h3>Paste your link</h3><p>Use the referral link from Rhockstar Connect.</p></article><article class="info-card"><span class="number">02</span><h3>Get your contest link</h3><p>We assign you a unique code for tracking visits.</p></article><article class="info-card"><span class="number">03</span><h3>Share and compete</h3><p>Share your contest link and track clicks.</p></article></section></main><footer>Rhockstar Connect · Referral Contest</footer><script type="module" src="app.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>Rhockstar Connect | Referral Contest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand-mark">RC</div>
+    <div>
+      <strong>Rhockstar Connect</strong>
+      <span>Referral Contest</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="hero">
+      <p class="eyebrow">INVITE · CONNECT · WIN</p>
+
+      <h1>
+        Your link.<br>
+        <span>Your reach. Your reward.</span>
+      </h1>
+
+      <p class="muted">
+        Invite people to join Rhockstar Connect using your unique
+        contest link. Track your clicks and the actual registrations
+        credited to you.
+      </p>
+    </section>
+
+    <!-- PRIZES -->
+    <section class="panel">
+      <p class="eyebrow">THE REWARDS</p>
+      <h2>Win amazing cash prizes</h2>
+
+      <div class="prize-grid">
+        <article class="prize-card first-prize">
+          <span class="prize-position">1ST PLACE</span>
+          <h3>₦100,000</h3>
+          <p>Grand prize</p>
+        </article>
+
+        <article class="prize-card second-prize">
+          <span class="prize-position">2ND PLACE</span>
+          <h3>₦50,000</h3>
+          <p>Second prize</p>
+        </article>
+
+        <article class="prize-card third-prize">
+          <span class="prize-position">3RD PLACE</span>
+          <h3>₦20,000</h3>
+          <p>Third prize</p>
+        </article>
+      </div>
+
+      <div class="winner-notice">
+        <strong>Important: How winners are selected</strong>
+        <p>
+          Winners are determined by the number of actual, verified
+          Rhockstar Connect signups credited to their referral links,
+          not by the number of clicks. Clicks alone do not qualify
+          you to win. Fake, duplicate or fraudulent registrations
+          may be disqualified.
+        </p>
+      </div>
+    </section>
+
+    <!-- JOIN CONTEST -->
+    <section class="panel">
+      <p class="eyebrow">JOIN THE CONTEST</p>
+      <h2>Get your tracking link</h2>
+
+      <form id="referralForm">
+        <label for="name">Your name</label>
+        <input
+          id="name"
+          maxlength="100"
+          placeholder="Enter your full name"
+          required
+        >
+
+        <label for="originalLink">
+          Your Rhockstar Connect referral link
+        </label>
+
+        <input
+          id="originalLink"
+          type="url"
+          placeholder="https://rhockstarconnect.com/..."
+          required
+        >
+
+        <p class="hint">
+          Paste the referral link you copied from Rhockstar Connect,
+          not the contest website address.
+        </p>
+
+        <button
+          id="submitBtn"
+          class="button button-primary full"
+          type="submit"
+        >
+          Generate my tracking link
+        </button>
+      </form>
+
+      <p id="formMessage" class="message" role="status"></p>
+
+      <!-- PARTICIPANT DASHBOARD -->
+      <section id="result" class="result hidden">
+        <div class="success-mark">✓</div>
+        <h3>Your tracking link is ready!</h3>
+
+        <p class="muted">
+          Share your unique contest link to attract new members.
+          Your results below show clicks and recorded signups.
+        </p>
+
+        <label for="trackingLink">Your unique contest link</label>
+
+        <div class="link-row">
+          <input id="trackingLink" readonly>
+          <button
+            id="copyBtn"
+            class="button button-primary"
+            type="button"
+          >
+            Copy
+          </button>
+        </div>
+
+        <p id="copyMessage" class="message" role="status"></p>
+
+        <div class="stats">
+          <article class="stat-card">
+            <span>Tracked clicks</span>
+            <strong id="clickCount">0</strong>
+            <small>Number of visits to your contest link</small>
+          </article>
+
+          <article class="stat-card">
+            <span>Actual signups</span>
+            <strong id="signupCount">0</strong>
+            <small>Registrations recorded for your referral</small>
+          </article>
+        </div>
+
+        <div class="winner-notice">
+          <strong>Remember!</strong>
+          <p>
+            Your clicks show how many people visited your link.
+            Your signup count shows how many registrations have
+            been recorded. The signup count determines your
+            position in the contest, not your clicks.
+          </p>
+        </div>
+
+        <p class="hint">
+          Signup figures may take time to update after registrations
+          are verified.
+        </p>
+
+        <p class="hint">
+          Contest code: <strong id="codeValue">—</strong>
+        </p>
+      </section>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="info-grid">
+      <article class="info-card">
+        <span class="number">01</span>
+        <h3>Paste your link</h3>
+        <p>Use your original referral link from Rhockstar Connect.</p>
+      </article>
+
+      <article class="info-card">
+        <span class="number">02</span>
+        <h3>Get your contest link</h3>
+        <p>Receive a unique link that tracks visits.</p>
+      </article>
+
+      <article class="info-card">
+        <span class="number">03</span>
+        <h3>Bring real signups</h3>
+        <p>Encourage people to register and compete for the prizes.</p>
+      </article>
+    </section>
+
+  </main>
+
+  <footer>
+    Rhockstar Connect · Referral Contest
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
